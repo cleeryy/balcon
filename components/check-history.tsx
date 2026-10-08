@@ -7,26 +7,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/status-badge";
 import { absoluteTime, logMessage, relativeTime } from "@/components/status";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 import type { CheckLog, SnapshotRef } from "@/components/types";
-
-/**
- * Local copy for this component only. It sits here (not in lib/strings.ts)
- * because this pass is scoped to app/ + components/ — move it into the shared
- * strings file the day the i18n lane opens up.
- */
-const copy = {
-  status: "Status",
-  checked: "Checked",
-  duration: "Duration",
-  backend: "Backend",
-  message: "Message",
-  viewDiff: "View diff",
-  noMessage: "—",
-  noDuration: "—",
-};
 
 /** `[direct] HTTP 403 …` → `direct`. Tolerates any bracketed backend tag. */
 function readBackend(message?: string | null): string | null {
@@ -85,6 +70,80 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
+type Metrics = ReturnType<typeof useDict>["detail"]["metrics"];
+
+function formatBytes(bytes: number, m: Metrics) {
+  if (bytes < 1024) return m.valueB(bytes);
+  return m.valueKb(Math.round((bytes / 1024) * 10) / 10);
+}
+
+/** 2xx green, 3xx amber, 4xx/5xx red — the usual HTTP reading. */
+function httpTone(status: number) {
+  if (status >= 400) return "text-destructive";
+  if (status >= 300) return "text-warning";
+  if (status >= 200) return "text-success";
+  return "text-muted-foreground";
+}
+
+interface Metric {
+  key: string;
+  label: string;
+  value: React.ReactNode;
+}
+
+/**
+ * Diagnostics grid. Every entry is pushed only when its field exists, so an
+ * older or partial log row simply renders fewer tiles — never a broken one.
+ */
+function metricsOf(log: CheckLog, backend: string | null, m: Metrics): Metric[] {
+  const list: Metric[] = [];
+  if (typeof log.httpStatus === "number") {
+    list.push({
+      key: "http",
+      label: m.http,
+      value: <span className={httpTone(log.httpStatus)}>{log.httpStatus}</span>,
+    });
+  }
+  if (backend) {
+    list.push({ key: "backend", label: m.backend, value: <span className="font-mono">{backend}</span> });
+  }
+  if (typeof log.fetchMs === "number") {
+    list.push({ key: "fetch", label: m.fetch, value: m.valueMs(log.fetchMs) });
+  }
+  if (typeof log.parseMs === "number") {
+    list.push({ key: "parse", label: m.parse, value: m.valueMs(log.parseMs) });
+  }
+  const sizes = [
+    typeof log.htmlBytes === "number" ? formatBytes(log.htmlBytes, m) : null,
+    typeof log.textBytes === "number" ? formatBytes(log.textBytes, m) : null,
+  ].filter((part): part is string => part !== null);
+  if (sizes.length > 0) {
+    list.push({ key: "size", label: m.size, value: sizes.join(" → ") });
+  }
+  if (typeof log.selectorMatches === "number") {
+    list.push({ key: "selector", label: m.selector, value: m.matches(log.selectorMatches) });
+  }
+  if (log.contentHash) {
+    list.push({
+      key: "hash",
+      label: m.hash,
+      value: <span className="font-mono">{log.contentHash.slice(0, 8)}</span>,
+    });
+  }
+  if (log.errorKind) {
+    list.push({
+      key: "errorKind",
+      label: m.errorKind,
+      value: (
+        <Badge variant="destructive" className="font-mono text-[11px]">
+          {log.errorKind}
+        </Badge>
+      ),
+    });
+  }
+  return list;
+}
+
 export function CheckHistory({
   logs,
   snapshots,
@@ -94,6 +153,10 @@ export function CheckHistory({
   snapshots: SnapshotRef[];
   onShowDiff?: (pair: { before: SnapshotRef; after: SnapshotRef }) => void;
 }) {
+  const t = useDict();
+  const m = t.detail.metrics;
+  const copy = t.detail.row;
+
   if (logs.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
@@ -106,7 +169,8 @@ export function CheckHistory({
     // Several rows stay open at once: comparing a 403 with a change is the job.
     <Accordion type="multiple" className="w-full">
       {logs.map((log) => {
-        const backend = readBackend(log.message);
+        const backend = log.backend ?? readBackend(log.message);
+        const metrics = metricsOf(log, backend, m);
         const pair = log.status === "CHANGED" ? findSnapshotPair(log, snapshots) : null;
         const raw = log.message ?? null;
 
@@ -132,47 +196,64 @@ export function CheckHistory({
             </AccordionTrigger>
 
             <AccordionContent className="pb-4">
-              <dl className="grid gap-3">
-                <Row label={copy.status}>
-                  <StatusBadge status={log.status} />
-                </Row>
-
-                <Row label={copy.checked}>
-                  <span className="font-mono text-xs">{absoluteTime(log.createdAt)}</span>
-                  <span className="ml-2 text-muted-foreground">{relativeTime(log.createdAt)}</span>
-                </Row>
-
-                <Row label={copy.duration}>
-                  <span className="font-mono text-xs tabular-nums">{log.durationMs} ms</span>
-                </Row>
-
-                {backend && (
-                  <Row label={copy.backend}>
-                    <span className="rounded-md border border-border bg-card-highlight px-2 py-0.5 font-mono text-xs">
-                      {backend}
-                    </span>
+              <div className="space-y-4">
+                <dl className="grid gap-3">
+                  <Row label={copy.status}>
+                    <StatusBadge status={log.status} />
                   </Row>
-                )}
 
-                <Row label={copy.message}>
-                  <pre className="max-w-3xl overflow-x-auto rounded-lg border border-border bg-card-highlight/60 p-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-foreground/90">
-                    {raw ?? copy.noMessage}
-                  </pre>
-                </Row>
+                  <Row label={copy.checked}>
+                    <span className="font-mono text-xs">{absoluteTime(log.createdAt)}</span>
+                    <span className="ml-2 text-muted-foreground">{relativeTime(log.createdAt)}</span>
+                  </Row>
 
-                {pair && onShowDiff && (
-                  <div className="sm:pl-[7.75rem]">
-                    <button
-                      type="button"
-                      onClick={() => onShowDiff(pair)}
-                      className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring"
-                    >
-                      <Columns2 className="h-3.5 w-3.5" />
-                      {copy.viewDiff}
-                    </button>
+                  <Row label={copy.duration}>
+                    <span className="font-mono text-xs tabular-nums">{log.durationMs} ms</span>
+                  </Row>
+
+                  <Row label={copy.message}>
+                    <pre className="max-w-3xl overflow-x-auto rounded-lg border border-border bg-card-highlight/60 p-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-foreground/90">
+                      {raw ?? copy.noMessage}
+                    </pre>
+                  </Row>
+
+                  {pair && onShowDiff && (
+                    <div className="sm:pl-[7.75rem]">
+                      <button
+                        type="button"
+                        onClick={() => onShowDiff(pair)}
+                        className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring"
+                      >
+                        <Columns2 className="h-3.5 w-3.5" />
+                        {copy.viewDiff}
+                      </button>
+                    </div>
+                  )}
+                </dl>
+
+                {metrics.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                      {m.title}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                      {metrics.map((metric) => (
+                        <div
+                          key={metric.key}
+                          className="rounded-lg border border-border bg-card-highlight/60 px-3 py-2"
+                        >
+                          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                            {metric.label}
+                          </p>
+                          <p className="mt-1 truncate text-sm font-semibold tabular-nums">
+                            {metric.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
-              </dl>
+              </div>
             </AccordionContent>
           </AccordionItem>
         );

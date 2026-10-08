@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "titleDefault": "balcon — surveillance de pages web",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon surveille vos pages web, détecte les changements et vous prévient par e-mail ou webhook.",
+    "footer": "balcon — surveillance de pages web auto-hébergée."
+  },
+
+  "header": {
+    "tagline": "surveillance de pages web",
+    "dashboard": "Tableau de bord",
+    "githubRepo": "Dépôt GitHub",
+    "switchToLight": "Passer en thème clair",
+    "switchToDark": "Passer en thème sombre",
+    "themeLight": "Thème clair",
+    "themeDark": "Thème sombre"
+  },
+
+  "common": {
+    "language": "Langue",
+    "scrollLeft": "Faire défiler les onglets à gauche",
+    "scrollRight": "Faire défiler les onglets à droite",
+    "dash": "—"
+  },
+
+  "dashboard": {
+    "eyebrow": "Tableau de bord",
+    "heading": "Vos veilles",
+    "intro": "Chaque page est revérifiée selon un planning. Tout changement, toute panne — tout apparaît ici.",
+    "updated": "Mis à jour",
+    "reload": "Recharger",
+    "reloadLabel": "Recharger la liste",
+
+    "stats": {
+      "total": "Veilles",
+      "totalHint": "pages suivies",
+      "changed": "Changements",
+      "changedHint": "dernier contrôle",
+      "errors": "Erreurs",
+      "errorsHint": "en échec"
+    },
+
+    "form": {
+      "placeholder": "https://example.com/page-a-surveiller",
+      "inputLabel": "Adresse de la page à surveiller",
+      "submit": "Surveiller cette page",
+      "hint": "L'adresse est vérifiée toutes les 30 minutes par défaut — modifiable sur la page de configuration."
+    },
+
+    "empty": {
+      "title": "Aucune veille pour l'instant",
+      "description": "Collez une adresse ci-dessus : balcon la vérifie en continu et vous prévient dès que le contenu change — par e-mail ou webhook.",
+      "footnote": "Les notifications démarrent après le premier contrôle."
+    },
+
+    "loadError": "Impossible de charger vos veilles",
+    "retry": "Réessayer",
+
+    "search": {
+      "label": "Rechercher une veille",
+      "placeholder": "Chercher un titre, une adresse ou un tag",
+      "tagsLabel": "Filtrer par tag",
+      "clear": "Effacer les filtres",
+      "results": { "_n": 1, "one": "{0} sur {1} veille", "other": "{0} sur {1} veilles" },
+      "total": { "one": "{0} veille", "other": "{0} veilles" },
+      "noMatchTitle": "Aucune veille ne correspond à votre recherche",
+      "noMatchBody": "Essayez un autre mot, ou effacez le filtre par tag."
+    },
+
+    "io": {
+      "export": "Exporter",
+      "exportLabel": "Télécharger toutes les veilles en fichier JSON",
+      "import": "Importer",
+      "importLabel": "Charger un fichier JSON de veilles",
+      "exported": "Export téléchargé",
+      "exportedDesc": { "one": "{0} veille écrite dans le fichier.", "other": "{0} veilles écrites dans le fichier." },
+      "exportFailed": "Échec de l'export",
+      "exportFailedDesc": "La liste des veilles n'a pas pu être téléchargée.",
+      "imported": "Import terminé",
+      "importedDesc": "{0} ajoutées · {1} ignorées",
+      "importFailed": "Échec de l'import",
+      "importInvalid": "Le fichier doit être un tableau JSON de veilles."
+    }
+  },
+
+  "form": {
+    "tagsField": "Tags",
+    "tagsPlaceholder": "prix, concurrent, actualités",
+    "tagsHint": "Séparés par des virgules — le tableau de bord peut filtrer dessus.",
+    "valueRegexField": "Valeur à extraire",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "Le premier groupe de capture est celui qui est suivi.",
+    "options": "Plus d'options",
+    "optionsHint": "Extraction, notifications et plage de contrôle.",
+    "notifications": "Notifications",
+    "notificationsHint": "Facultatif — envoyées quand le contenu change.",
+    "discordField": "Webhook Discord",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Webhook Slack",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "Plage de contrôle",
+    "windowHint": "Les contrôles ne s'exécutent que dans cette plage.",
+    "windowOff": "Aucune plage — contrôlé en continu.",
+    "windowSummary": { "one": "{0} jour · {1} → {2}", "other": "{0} jours · {1} → {2}" },
+    "daysLabel": "Jours",
+    "from": "De",
+    "to": "À",
+    "clearWindow": "Effacer la plage",
+    "pauseUntilTomorrow": "Mettre en pause jusqu'à demain",
+    "resumeNow": "Reprendre maintenant",
+    "pausedUntil": "En pause jusqu'à {0}",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    }
+  },
+
+  "card": {
+    "checked": "Vérifiée",
+    "neverChecked": "Jamais vérifiée",
+    "everyInterval": "toutes les {0} min",
+    "next": "Suivant",
+    "checkNow": "Vérifier",
+    "checkNowTitle": "Lancer un contrôle immédiatement",
+    "pausedTitle": "Cette veille est en pause",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "pauseTitle": "Mettre cette veille en pause",
+    "resumeTitle": "Reprendre la surveillance",
+    "openSettings": "Ouvrir la configuration",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer",
+    "deleteConfirmTitle": "Cliquez encore pour supprimer",
+    "confirm": "Confirmer",
+    "deleteLabel": "Supprimer cette veille"
+  },
+
+  "detail": {
+    "backToWatches": "Toutes les veilles",
+    "watching": "Surveillance active",
+    "paused": "En pause",
+    "manualResume": "reprise manuelle",
+    "checkNow": "Vérifier maintenant",
+
+    "summary": {
+      "lastCheck": "Dernier contrôle",
+      "nextCheck": "Prochain contrôle",
+      "checks": "Contrôles",
+      "snapshots": "Instantanés",
+      "never": "jamais",
+      "noChecks": "aucun contrôle",
+      "everyInterval": "toutes les {0} min",
+      "recentCount": { "one": "{0} récente", "other": "{0} récentes" },
+      "keepCount": "20 derniers conservés",
+      "storedCount": { "one": "{0} enregistré", "other": "{0} enregistrés" },
+      "contentReady": "contenu disponible",
+      "onFirstChange": "dès le premier changement"
+    },
+
+    "tabs": {
+      "configuration": "Configuration",
+      "checks": "Contrôles",
+      "snapshots": "Instantanés"
+    },
+
+    "config": {
+      "title": "Configuration",
+      "description": "Les changements s'appliquent au prochain contrôle.",
+      "titleField": "Titre",
+      "titlePlaceholder": "ex. Tarifs d'abonnement",
+      "urlField": "Adresse de la page",
+      "urlPlaceholder": "https://example.com/tarifs",
+      "selectorField": "Sélecteur CSS",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "Limite la surveillance à une zone précise de la page.",
+      "intervalField": "Intervalle (minutes)",
+      "intervalHint": "1 minute minimum, 30 minutes par défaut.",
+      "ignoreField": "Motif à ignorer",
+      "ignorePlaceholder": "\\d+ €|mis à jour",
+      "ignoreHint": "Regex JavaScript exclue de la comparaison — pratique pour les dates et compteurs.",
+      "emailField": "E-mail de notification",
+      "emailPlaceholder": "vous@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "Enregistrer",
+      "updatedLast": "Dernière mise à jour"
+    },
+
+    "values": {
+      "title": "Valeurs suivies",
+      "description": "Chaque valeur capturée par le motif d'extraction, de la plus récente à la plus ancienne.",
+      "date": "Date",
+      "label": "Libellé",
+      "value": "Valeur",
+      "change": "Variation",
+      "empty": "Aucune valeur capturée pour l'instant — ajoutez un motif d'extraction dans la configuration."
+    },
+
+    "row": {
+      "status": "Statut",
+      "checked": "Vérifié le",
+      "duration": "Durée",
+      "message": "Message",
+      "viewDiff": "Voir le diff",
+      "noMessage": "—"
+    },
+
+    "metrics": {
+      "title": "Métriques",
+      "http": "HTTP",
+      "backend": "Backend",
+      "fetch": "Récupération",
+      "parse": "Analyse",
+      "size": "HTML → texte",
+      "selector": "Correspondances sélecteur",
+      "hash": "Empreinte du contenu",
+      "errorKind": "Type d'erreur",
+      "valueMs": "{0} ms",
+      "valueKb": "{0} Ko",
+      "valueB": "{0} o",
+      "matches": "{0}"
+    },
+
+    "checks": {
+      "title": "Historique des contrôles",
+      "description": "Les 20 derniers contrôles enregistrés.",
+      "empty": "Aucun contrôle pour l'instant. Lancez-en un depuis le haut de la page."
+    },
+
+    "snapshots": {
+      "title": "Historique des instantanés",
+      "description": "L'état de la page enregistré à chaque changement, conservé pour comparaison.",
+      "empty": "Aucun instantané — le premier est créé dès qu'un changement est détecté.",
+      "compareHint": "Comparer cet instantané au plus récent"
+    },
+
+    "diff": {
+      "title": "Comparaison visuelle",
+      "description": "Version précédente à gauche, version actuelle à droite.",
+      "before": "Avant",
+      "after": "Après",
+      "notEnoughTitle": "Pas assez d'instantanés à comparer",
+      "notEnoughBody": "Deux états enregistrés sont nécessaires pour afficher un diff.",
+      "scrollLabel": "Comparaison visuelle"
+    },
+
+    "notFound": {
+      "title": "Veille introuvable",
+      "description": "Cette page a disparu ou été supprimée. Revenez au tableau de bord pour retrouver vos autres veilles.",
+      "goBack": "Retour"
+    }
+  },
+
+  "diff": {
+    "identical": "Les deux instantanés sont identiques — rien à afficher.",
+    "added": { "one": "{0} ajoutée", "other": "{0} ajoutées" },
+    "removed": { "one": "{0} supprimée", "other": "{0} supprimées" },
+    "split": "Côte à côte",
+    "unified": "Ligne à ligne",
+    "splitTitle": "Vue côte à côte",
+    "unifiedTitle": "Vue ligne à ligne",
+    "before": "Avant",
+    "after": "Après",
+    "hiddenLines": {
+      "one": "{0} ligne supplémentaire masquée pour garder la réactivité.",
+      "other": "{0} lignes supplémentaires masquées pour garder la réactivité."
+    }
+  },
+
+  "toast": {
+    "loadFailed": "Chargement impossible",
+    "loadFailedDesc": "La page n'a pas pu être récupérée.",
+    "unknownError": "Une erreur est survenue.",
+    "retryLater": "Réessayez dans un instant.",
+
+    "missingUrl": "Adresse manquante",
+    "missingUrlDesc": "Collez l'adresse de la page que vous voulez surveiller.",
+    "invalidUrl": "cette adresse n'est pas valide",
+    "added": "Page ajoutée",
+    "addedDesc": "Le premier contrôle démarre sous peu.",
+    "addFailed": "Ajout impossible",
+    "addFailedDesc": "Vérifiez l'adresse et réessayez.",
+
+    "paused": "Veille en pause",
+    "resumed": "Surveillance rétablie",
+    "actionFailed": "Action échouée",
+    "deleted": "Veille supprimée",
+
+    "checkFailed": "Contrôle échoué",
+    "changed": "Changement détecté",
+    "changedDesc": "Voir le diff ci-dessous.",
+    "checkImpossible": "Impossible d'exécuter le contrôle",
+
+    "saved": "Configuration enregistrée",
+    "saveFailed": "Enregistrement impossible",
+    "checkFields": "vérifiez les champs remplis",
+    "loadImpossible": "Chargement impossible"
+  },
+
+  "status": {
+    "label": {
+      "OK": "inchangé",
+      "CHANGED": "changé",
+      "ERROR": "erreur",
+      "SKIPPED": "ignoré"
+    },
+    "paused": "En pause",
+    "neverChecked": "Jamais vérifiée",
+    "never": "jamais",
+    "justNow": "à l'instant",
+    "minAgo": "il y a {0} min",
+    "hoursAgo": { "one": "il y a {0} heure", "other": "il y a {0} heures" },
+    "yesterday": "hier",
+    "daysAgo": { "one": "il y a {0} jour", "other": "il y a {0} jours" },
+    "anyMoment": "d'un instant à l'autre",
+    "inMin": "dans {0} min",
+    "inHours": { "one": "dans {0} heure", "other": "dans {0} heures" },
+    "inDays": { "one": "dans {0} jour", "other": "dans {0} jours" },
+    "contentChanged": "contenu modifié ({0} → {1})"
+  }
+}

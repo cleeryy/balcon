@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { strings as t } from "@/lib/strings";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { useDict } from "@/components/locale-provider";
 
 function GithubMark({ className }: { className?: string }) {
   return (
@@ -16,6 +17,7 @@ function GithubMark({ className }: { className?: string }) {
 }
 
 export function SiteHeader() {
+  const t = useDict();
   const pathname = usePathname();
   const onHome = pathname === "/";
 
@@ -53,6 +55,7 @@ export function SiteHeader() {
           >
             <GithubMark className="h-4 w-4" />
           </a>
+          <LocaleSwitcher />
           <ThemeToggle />
         </nav>
       </div>

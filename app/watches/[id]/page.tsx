@@ -7,6 +7,7 @@ import {
   Clock3,
   History,
   Images,
+  Moon,
   Radar,
   RefreshCw,
   Save,
@@ -32,10 +33,17 @@ import { SiteFavicon } from "@/components/site-favicon";
 import { DiffView } from "@/components/diff-view";
 import { StatusBadge } from "@/components/status-badge";
 import { CheckHistory } from "@/components/check-history";
-import { absoluteTime, relativeTime, untilTime } from "@/components/status";
+import { ValuePoints } from "@/components/value-points";
+import {
+  CheckWindowEditor,
+  NotificationsFields,
+  TagsField,
+  ValueRegexField,
+} from "@/components/watch-fields";
+import { absoluteTime, isPausedUntil, relativeTime, untilTime } from "@/components/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { Switch } from "@/components/motion/switch";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 import type { CheckLog, Snapshot, SnapshotRef, WatchDetail } from "@/components/types";
 
 export const dynamic = "force-dynamic";
@@ -48,21 +56,34 @@ interface FormState {
   intervalMin: number;
   webhookUrl: string;
   email: string;
+  tags: string;
+  valueRegex: string;
+  discordWebhookUrl: string;
+  slackWebhookUrl: string;
+  checkWindows: string;
 }
 
+const EMPTY_FORM: FormState = {
+  title: "",
+  url: "",
+  selector: "",
+  ignoreRegex: "",
+  intervalMin: 30,
+  webhookUrl: "",
+  email: "",
+  tags: "",
+  valueRegex: "",
+  discordWebhookUrl: "",
+  slackWebhookUrl: "",
+  checkWindows: "",
+};
+
 export default function WatchDetail({ params }: { params: Promise<{ id: string }> }) {
+  const t = useDict();
   const { id } = use(params);
   const [watch, setWatch] = useState<WatchDetail | null>(null);
   const [snaps, setSnaps] = useState<Snapshot[]>([]);
-  const [form, setForm] = useState<FormState>({
-    title: "",
-    url: "",
-    selector: "",
-    ignoreRegex: "",
-    intervalMin: 30,
-    webhookUrl: "",
-    email: "",
-  });
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -94,6 +115,12 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         intervalMin: w.intervalMin ?? 30,
         webhookUrl: w.webhookUrl ?? "",
         email: w.email ?? "",
+        tags: w.tags ?? "",
+        valueRegex: w.valueRegex ?? "",
+        discordWebhookUrl: w.discordWebhookUrl ?? "",
+        slackWebhookUrl: w.slackWebhookUrl ?? "",
+        // Malformed JSON from an older row still lands as an editable string.
+        checkWindows: w.checkWindows ?? "",
       });
 
       const s: Snapshot[] = snapRes.ok ? await snapRes.json() : [];
@@ -105,7 +132,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, t]);
 
   // Initial load: delegated to a promise, so no setState runs inside the effect.
   useEffect(() => {
@@ -123,7 +150,14 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
       const res = await fetch(`/api/watches/${id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...form, intervalMin: Number(form.intervalMin) }),
+        body: JSON.stringify({
+          ...form,
+          intervalMin: Number(form.intervalMin),
+          valueRegex: form.valueRegex.trim() || null,
+          discordWebhookUrl: form.discordWebhookUrl.trim() || null,
+          slackWebhookUrl: form.slackWebhookUrl.trim() || null,
+          checkWindows: form.checkWindows.trim() || null,
+        }),
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
@@ -176,6 +210,36 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
     }
   }
 
+  /** Set (or lift) the pause: the scheduler skips the watch until that date. */
+  async function patchPausedUntil(value: string | null) {
+    try {
+      const res = await fetch(`/api/watches/${id}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ pausedUntil: value }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "");
+      }
+      toast.success(value ? t.toast.paused : t.toast.resumed, {
+        description: watch?.title || watch?.url,
+      });
+      await load();
+    } catch (err) {
+      toast.error(t.toast.actionFailed, {
+        description: err instanceof Error && err.message ? err.message : t.toast.retryLater,
+      });
+    }
+  }
+
+  function pauseUntilTomorrow() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    void patchPausedUntil(tomorrow.toISOString());
+  }
+
   const before = useMemo(() => snaps.find((s) => s.id === beforeId), [snaps, beforeId]);
   const after = useMemo(() => snaps.find((s) => s.id === afterId), [snaps, afterId]);
 
@@ -191,6 +255,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
 
   const logs: CheckLog[] = watch?.checkLogs ?? [];
   const lastLog = logs[0];
+  const pausedUntilActive = isPausedUntil(watch?.pausedUntil);
 
   if (loading) {
     return (
@@ -343,6 +408,8 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         </Card>
       </section>
 
+      <ValuePoints points={watch.valuePoints} />
+
       <Tabs value={tab} onValueChange={setTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="configuration">{t.detail.tabs.configuration}</TabsTrigger>
@@ -379,6 +446,20 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                     placeholder={t.detail.config.urlPlaceholder}
                     className="font-mono text-sm"
                     spellCheck={false}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <TagsField
+                    id="tags"
+                    value={form.tags}
+                    onChange={(tags) => setForm({ ...form, tags })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <ValueRegexField
+                    id="value-regex"
+                    value={form.valueRegex}
+                    onChange={(valueRegex) => setForm({ ...form, valueRegex })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -439,15 +520,50 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                     spellCheck={false}
                   />
                 </div>
-                <div className="flex items-center gap-3 sm:col-span-2">
+                <div className="sm:col-span-2">
+                  <NotificationsFields
+                    idPrefix="detail"
+                    discord={form.discordWebhookUrl}
+                    slack={form.slackWebhookUrl}
+                    onDiscord={(discordWebhookUrl) => setForm({ ...form, discordWebhookUrl })}
+                    onSlack={(slackWebhookUrl) => setForm({ ...form, slackWebhookUrl })}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <CheckWindowEditor
+                    idPrefix="detail"
+                    value={form.checkWindows}
+                    onChange={(checkWindows) => setForm({ ...form, checkWindows })}
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
                   <Button type="submit" disabled={saving}>
                     {saving ? <span className="btn-spinner" aria-hidden="true" /> : <Save />}
                     {t.detail.config.save}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={pauseUntilTomorrow}>
+                    <Moon />
+                    {t.form.pauseUntilTomorrow}
                   </Button>
                   <span className="text-xs text-muted-foreground">
                     {t.detail.config.updatedLast} {relativeTime(watch.updatedAt ?? null)}
                   </span>
                 </div>
+                {pausedUntilActive && (
+                  <div className="flex flex-wrap items-center gap-3 sm:col-span-2 -mt-1">
+                    <span className="text-xs font-medium text-warning">
+                      {t.form.pausedUntil(absoluteTime(watch.pausedUntil ?? null))}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => void patchPausedUntil(null)}
+                    >
+                      {t.form.resumeNow}
+                    </Button>
+                  </div>
+                )}
               </form>
             </CardContent>
           </Card>

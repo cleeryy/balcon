@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SiteFavicon } from "@/components/site-favicon";
 import { StatusBadge } from "@/components/status-badge";
 import { relativeTime, untilTime } from "@/components/status";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 import type { WatchSummary } from "@/components/types";
 
 export function WatchCard({
@@ -26,6 +26,7 @@ export function WatchCard({
   onToggle: (w: WatchSummary) => void;
   onDelete: (w: WatchSummary) => void;
 }) {
+  const t = useDict();
   const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {

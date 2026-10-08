@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 
 const emptySubscribe = () => () => {};
 
@@ -18,6 +18,7 @@ function useMounted() {
 }
 
 export function ThemeToggle() {
+  const t = useDict();
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const isDark = mounted && resolvedTheme === "dark";

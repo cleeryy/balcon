@@ -1,0 +1,323 @@
+{
+  "meta": {
+    "titleDefault": "balcon — 网页监控",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon 监控你的网页，发现变化并及时通过邮件或 Webhook 通知你。",
+    "footer": "balcon — 自托管的网页监控。"
+  },
+
+  "header": {
+    "tagline": "网页监控",
+    "dashboard": "控制台",
+    "githubRepo": "GitHub 仓库",
+    "switchToLight": "切换到浅色主题",
+    "switchToDark": "切换到深色主题",
+    "themeLight": "浅色主题",
+    "themeDark": "深色主题"
+  },
+
+  "common": {
+    "language": "语言",
+    "scrollLeft": "向左滚动标签页",
+    "scrollRight": "向右滚动标签页",
+    "dash": "—"
+  },
+
+  "dashboard": {
+    "eyebrow": "控制台",
+    "heading": "你的监控",
+    "intro": "每个页面都会按计划重新检查。任何变化、任何故障，都会显示在这里。",
+    "updated": "更新于",
+    "reload": "刷新",
+    "reloadLabel": "刷新列表",
+
+    "stats": {
+      "total": "监控",
+      "totalHint": "个被跟踪的页面",
+      "changed": "变化",
+      "changedHint": "上次检查",
+      "errors": "错误",
+      "errorsHint": "个失败"
+    },
+
+    "form": {
+      "placeholder": "https://example.com/要监控的页面",
+      "inputLabel": "要监控的页面地址",
+      "submit": "监控这个页面",
+      "hint": "默认每 30 分钟检查一次地址，可在配置页面中修改。"
+    },
+
+    "empty": {
+      "title": "还没有监控",
+      "description": "在上方粘贴地址：balcon 会持续检查它，一旦内容发生变化就会通知你——通过邮件或 Webhook。",
+      "footnote": "通知从第一次检查后开始。"
+    },
+
+    "loadError": "无法加载你的监控列表",
+    "retry": "重试",
+
+    "search": {
+      "label": "搜索监控",
+      "placeholder": "搜索标题、地址或标签",
+      "tagsLabel": "按标签筛选",
+      "clear": "清除筛选",
+      "results": "{0} / {1} 个监控",
+      "total": "{0} 个监控",
+      "noMatchTitle": "没有匹配的监控",
+      "noMatchBody": "换个关键词试试，或清除标签筛选。"
+    },
+
+    "io": {
+      "export": "导出",
+      "exportLabel": "将所有监控下载为 JSON 文件",
+      "import": "导入",
+      "importLabel": "上传 JSON 监控文件",
+      "exported": "已下载导出文件",
+      "exportedDesc": "已写入 {0} 个监控。",
+      "exportFailed": "导出失败",
+      "exportFailedDesc": "无法下载监控列表。",
+      "imported": "导入完成",
+      "importedDesc": "新增 {0} 个 · 跳过 {1} 个",
+      "importFailed": "导入失败",
+      "importInvalid": "文件必须是 JSON 数组格式的监控列表。"
+    }
+  },
+
+  "form": {
+    "tagsField": "标签",
+    "tagsPlaceholder": "价格, 竞品, 资讯",
+    "tagsHint": "用逗号分隔——控制台可以按标签筛选。",
+    "valueRegexField": "要提取的值",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "只有第一个捕获组会被记录。",
+    "options": "更多选项",
+    "optionsHint": "提取、通知与检查时段。",
+    "notifications": "通知",
+    "notificationsHint": "可选——内容变化时发送。",
+    "discordField": "Discord Webhook",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Slack Webhook",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "检查时段",
+    "windowHint": "只有在该时段内才会执行检查。",
+    "windowOff": "未设置时段——全天候检查。",
+    "windowSummary": "{0} 天 · {1} → {2}",
+    "daysLabel": "星期",
+    "from": "从",
+    "to": "到",
+    "clearWindow": "清除时段",
+    "pauseUntilTomorrow": "暂停到明天",
+    "resumeNow": "立即恢复",
+    "pausedUntil": "已暂停至 {0}",
+    "days": {
+      "mon": "周一",
+      "tue": "周二",
+      "wed": "周三",
+      "thu": "周四",
+      "fri": "周五",
+      "sat": "周六",
+      "sun": "周日"
+    }
+  },
+
+  "card": {
+    "checked": "检查于",
+    "neverChecked": "从未检查",
+    "everyInterval": "每 {0} 分钟",
+    "next": "下次",
+    "checkNow": "立即检查",
+    "checkNowTitle": "马上运行一次检查",
+    "pausedTitle": "该监控已暂停",
+    "pause": "暂停",
+    "resume": "恢复",
+    "pauseTitle": "暂停该监控",
+    "resumeTitle": "恢复监控",
+    "openSettings": "打开配置",
+    "delete": "删除",
+    "deleteTitle": "删除",
+    "deleteConfirmTitle": "再次点击以删除",
+    "confirm": "确认",
+    "deleteLabel": "删除该监控"
+  },
+
+  "detail": {
+    "backToWatches": "全部监控",
+    "watching": "监控中",
+    "paused": "已暂停",
+    "manualResume": "需手动恢复",
+    "checkNow": "立即检查",
+
+    "summary": {
+      "lastCheck": "上次检查",
+      "nextCheck": "下次检查",
+      "checks": "检查",
+      "snapshots": "快照",
+      "never": "从未",
+      "noChecks": "还没有检查记录",
+      "everyInterval": "每 {0} 分钟",
+      "recentCount": "最近 {0} 次",
+      "keepCount": "保留最近 20 条",
+      "storedCount": "已存 {0} 条",
+      "contentReady": "内容可用",
+      "onFirstChange": "在首次变化时"
+    },
+
+    "tabs": {
+      "configuration": "配置",
+      "checks": "检查记录",
+      "snapshots": "快照"
+    },
+
+    "config": {
+      "title": "配置",
+      "description": "修改将在下次检查时生效。",
+      "titleField": "标题",
+      "titlePlaceholder": "例如：订阅价格",
+      "urlField": "页面地址",
+      "urlPlaceholder": "https://example.com/pricing",
+      "selectorField": "CSS 选择器",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "把监控范围限制在页面的某个精确区域。",
+      "intervalField": "间隔（分钟）",
+      "intervalHint": "最少 1 分钟，默认 30 分钟。",
+      "ignoreField": "忽略的模式",
+      "ignorePlaceholder": "\\d+ €|更新于",
+      "ignoreHint": "比较时排除的 JavaScript 正则——适合日期和计数器。",
+      "emailField": "通知邮箱",
+      "emailPlaceholder": "you@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "保存",
+      "updatedLast": "最后更新"
+    },
+
+    "values": {
+      "title": "跟踪的数值",
+      "description": "提取规则捕获到的每个数值，最新的排在前面。",
+      "date": "时间",
+      "label": "名称",
+      "value": "数值",
+      "change": "变化",
+      "empty": "还没有捕获到数值——请在配置中添加提取规则。"
+    },
+
+    "row": {
+      "status": "状态",
+      "checked": "检查时间",
+      "duration": "耗时",
+      "message": "消息",
+      "viewDiff": "查看差异",
+      "noMessage": "—"
+    },
+
+    "metrics": {
+      "title": "指标",
+      "http": "HTTP",
+      "backend": "抓取方式",
+      "fetch": "下载",
+      "parse": "解析",
+      "size": "HTML → 文本",
+      "selector": "选择器匹配",
+      "hash": "内容哈希",
+      "errorKind": "错误类型",
+      "valueMs": "{0} 毫秒",
+      "valueKb": "{0} KB",
+      "valueB": "{0} B",
+      "matches": "{0}"
+    },
+
+    "checks": {
+      "title": "检查历史",
+      "description": "最近 20 条检查记录。",
+      "empty": "还没有检查记录。可在页面顶部运行一次。"
+    },
+
+    "snapshots": {
+      "title": "快照历史",
+      "description": "每次变化时保存的页面状态，便于对比。",
+      "empty": "还没有快照——检测到第一次变化时就会创建。",
+      "compareHint": "将此快照与最新快照对比"
+    },
+
+    "diff": {
+      "title": "可视化对比",
+      "description": "左侧为旧版本，右侧为当前版本。",
+      "before": "之前",
+      "after": "之后",
+      "notEnoughTitle": "快照不足，无法对比",
+      "notEnoughBody": "需要两个已保存的状态才能生成差异。",
+      "scrollLabel": "可视化对比"
+    },
+
+    "notFound": {
+      "title": "未找到该监控",
+      "description": "页面已不存在或已被删除。返回控制台查看其他监控。",
+      "goBack": "返回"
+    }
+  },
+
+  "diff": {
+    "identical": "两个快照完全相同——没有可展示的内容。",
+    "added": "新增 {0} 行",
+    "removed": "删除 {0} 行",
+    "split": "并排显示",
+    "unified": "逐行显示",
+    "splitTitle": "并排视图",
+    "unifiedTitle": "逐行视图",
+    "before": "之前",
+    "after": "之后",
+    "hiddenLines": "已隐藏另外 {0} 行以保持流畅。"
+  },
+
+  "toast": {
+    "loadFailed": "加载失败",
+    "loadFailedDesc": "无法获取该页面。",
+    "unknownError": "出了点问题。",
+    "retryLater": "请稍后再试。",
+
+    "missingUrl": "缺少地址",
+    "missingUrlDesc": "粘贴你想监控的页面地址。",
+    "invalidUrl": "该地址无效",
+    "added": "页面已添加",
+    "addedDesc": "第一次检查即将开始。",
+    "addFailed": "添加失败",
+    "addFailedDesc": "请检查地址后重试。",
+
+    "paused": "监控已暂停",
+    "resumed": "已恢复监控",
+    "actionFailed": "操作失败",
+    "deleted": "监控已删除",
+
+    "checkFailed": "检查失败",
+    "changed": "检测到变化",
+    "changedDesc": "请查看下方的差异。",
+    "checkImpossible": "无法执行检查",
+
+    "saved": "配置已保存",
+    "saveFailed": "保存失败",
+    "checkFields": "请检查填写的字段",
+    "loadImpossible": "无法加载"
+  },
+
+  "status": {
+    "label": {
+      "OK": "无变化",
+      "CHANGED": "已变化",
+      "ERROR": "错误",
+      "SKIPPED": "已跳过"
+    },
+    "paused": "已暂停",
+    "neverChecked": "从未检查",
+    "never": "从未",
+    "justNow": "刚刚",
+    "minAgo": "{0} 分钟前",
+    "hoursAgo": "{0} 小时前",
+    "yesterday": "昨天",
+    "daysAgo": "{0} 天前",
+    "anyMoment": "随时",
+    "inMin": "{0} 分钟后",
+    "inHours": "{0} 小时后",
+    "inDays": "{0} 天后",
+    "contentChanged": "内容已变化（{0} → {1}）"
+  }
+}

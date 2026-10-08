@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "titleDefault": "balcon — web page monitoring",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon watches your web pages, detects changes and notifies you by email or webhook.",
+    "footer": "balcon — self-hosted web page monitoring."
+  },
+
+  "header": {
+    "tagline": "web page monitoring",
+    "dashboard": "Dashboard",
+    "githubRepo": "GitHub repository",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme",
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme"
+  },
+
+  "common": {
+    "language": "Language",
+    "scrollLeft": "Scroll tabs left",
+    "scrollRight": "Scroll tabs right",
+    "dash": "—"
+  },
+
+  "dashboard": {
+    "eyebrow": "Dashboard",
+    "heading": "Your watches",
+    "intro": "Every page is re-checked on a schedule. Any change, any outage — it all shows up here.",
+    "updated": "Updated",
+    "reload": "Reload",
+    "reloadLabel": "Reload the list",
+
+    "stats": {
+      "total": "Watches",
+      "totalHint": "pages tracked",
+      "changed": "Changes",
+      "changedHint": "last check",
+      "errors": "Errors",
+      "errorsHint": "failing"
+    },
+
+    "form": {
+      "placeholder": "https://example.com/page-to-watch",
+      "inputLabel": "Address of the page to watch",
+      "submit": "Watch this page",
+      "hint": "The address is checked every 30 minutes by default — you can change that on the configuration page."
+    },
+
+    "empty": {
+      "title": "No watches yet",
+      "description": "Paste an address above: balcon keeps checking it and lets you know the moment the content changes — by email or webhook.",
+      "footnote": "Notifications start after the first check."
+    },
+
+    "loadError": "We could not load your watches",
+    "retry": "Try again",
+
+    "search": {
+      "label": "Search watches",
+      "placeholder": "Search a title, an address or a tag",
+      "tagsLabel": "Filter by tag",
+      "clear": "Clear filters",
+      "results": { "_n": 1, "one": "{0} of {1} watch", "other": "{0} of {1} watches" },
+      "total": { "one": "{0} watch", "other": "{0} watches" },
+      "noMatchTitle": "No watch matches your search",
+      "noMatchBody": "Try another word, or clear the tag filter."
+    },
+
+    "io": {
+      "export": "Export",
+      "exportLabel": "Download every watch as a JSON file",
+      "import": "Import",
+      "importLabel": "Upload a JSON file of watches",
+      "exported": "Export downloaded",
+      "exportedDesc": { "one": "{0} watch written to file.", "other": "{0} watches written to file." },
+      "exportFailed": "Export failed",
+      "exportFailedDesc": "The watch list could not be downloaded.",
+      "imported": "Import complete",
+      "importedDesc": "{0} added · {1} skipped",
+      "importFailed": "Import failed",
+      "importInvalid": "The file must be a JSON array of watches."
+    }
+  },
+
+  "form": {
+    "tagsField": "Tags",
+    "tagsPlaceholder": "pricing, competitor, news",
+    "tagsHint": "Comma separated — the dashboard can filter on them.",
+    "valueRegexField": "Value to extract",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "The first capture group is what gets tracked.",
+    "options": "More options",
+    "optionsHint": "Extraction, notifications and check window.",
+    "notifications": "Notifications",
+    "notificationsHint": "Optional — sent when the content changes.",
+    "discordField": "Discord webhook",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Slack webhook",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "Check window",
+    "windowHint": "Checks only run inside this window.",
+    "windowOff": "No window — checked around the clock.",
+    "windowSummary": { "one": "{0} day · {1} → {2}", "other": "{0} days · {1} → {2}" },
+    "daysLabel": "Days",
+    "from": "From",
+    "to": "To",
+    "clearWindow": "Clear window",
+    "pauseUntilTomorrow": "Pause until tomorrow",
+    "resumeNow": "Resume now",
+    "pausedUntil": "Paused until {0}",
+    "days": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
+  },
+
+  "card": {
+    "checked": "Checked",
+    "neverChecked": "Never checked",
+    "everyInterval": "every {0} min",
+    "next": "Next",
+    "checkNow": "Check now",
+    "checkNowTitle": "Run a check right away",
+    "pausedTitle": "This watch is paused",
+    "pause": "Pause",
+    "resume": "Resume",
+    "pauseTitle": "Pause this watch",
+    "resumeTitle": "Resume watching",
+    "openSettings": "Open configuration",
+    "delete": "Delete",
+    "deleteTitle": "Delete",
+    "deleteConfirmTitle": "Click again to delete",
+    "confirm": "Confirm",
+    "deleteLabel": "Delete this watch"
+  },
+
+  "detail": {
+    "backToWatches": "All watches",
+    "watching": "Watching",
+    "paused": "Paused",
+    "manualResume": "resume manually",
+    "checkNow": "Check now",
+
+    "summary": {
+      "lastCheck": "Last check",
+      "nextCheck": "Next check",
+      "checks": "Checks",
+      "snapshots": "Snapshots",
+      "never": "never",
+      "noChecks": "no checks yet",
+      "everyInterval": "every {0} min",
+      "recentCount": "{0} recent",
+      "keepCount": "last 20 kept",
+      "storedCount": "{0} stored",
+      "contentReady": "content available",
+      "onFirstChange": "on first change"
+    },
+
+    "tabs": {
+      "configuration": "Configuration",
+      "checks": "Checks",
+      "snapshots": "Snapshots"
+    },
+
+    "config": {
+      "title": "Configuration",
+      "description": "Changes apply to the next check.",
+      "titleField": "Title",
+      "titlePlaceholder": "e.g. Subscription pricing",
+      "urlField": "Page address",
+      "urlPlaceholder": "https://example.com/pricing",
+      "selectorField": "CSS selector",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "Restricts monitoring to one precise area of the page.",
+      "intervalField": "Interval (minutes)",
+      "intervalHint": "1 minute minimum, 30 minutes by default.",
+      "ignoreField": "Pattern to ignore",
+      "ignorePlaceholder": "\\d+ €|last updated",
+      "ignoreHint": "JavaScript regex left out of the comparison — handy for dates and counters.",
+      "emailField": "Notification email",
+      "emailPlaceholder": "you@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "Save",
+      "updatedLast": "Last updated"
+    },
+
+    "values": {
+      "title": "Tracked values",
+      "description": "Every value captured by the extraction pattern, newest first.",
+      "date": "Date",
+      "label": "Label",
+      "value": "Value",
+      "change": "Change",
+      "empty": "No value captured yet — add an extraction pattern in the configuration."
+    },
+
+    "row": {
+      "status": "Status",
+      "checked": "Checked",
+      "duration": "Duration",
+      "message": "Message",
+      "viewDiff": "View diff",
+      "noMessage": "—"
+    },
+
+    "metrics": {
+      "title": "Metrics",
+      "http": "HTTP",
+      "backend": "Backend",
+      "fetch": "Fetch",
+      "parse": "Parse",
+      "size": "HTML → text",
+      "selector": "Selector matches",
+      "hash": "Content hash",
+      "errorKind": "Error kind",
+      "valueMs": "{0} ms",
+      "valueKb": "{0} KB",
+      "valueB": "{0} B",
+      "matches": "{0}"
+    },
+
+    "checks": {
+      "title": "Check history",
+      "description": "The last 20 checks on record.",
+      "empty": "No checks yet. Run one from the top of the page."
+    },
+
+    "snapshots": {
+      "title": "Snapshot history",
+      "description": "The page state saved at every change, kept for comparison.",
+      "empty": "No snapshot yet — the first one is created as soon as a change is detected.",
+      "compareHint": "Compare this snapshot with the newest one"
+    },
+
+    "diff": {
+      "title": "Visual comparison",
+      "description": "Previous version on the left, current version on the right.",
+      "before": "Before",
+      "after": "After",
+      "notEnoughTitle": "Not enough snapshots to compare",
+      "notEnoughBody": "Two stored states are needed to render a diff.",
+      "scrollLabel": "Visual comparison"
+    },
+
+    "notFound": {
+      "title": "Watch not found",
+      "description": "This page is gone or was deleted. Head back to the dashboard to find your other watches.",
+      "goBack": "Go back"
+    }
+  },
+
+  "diff": {
+    "identical": "The two snapshots are identical — nothing to show.",
+    "added": { "one": "{0} added", "other": "{0} added" },
+    "removed": { "one": "{0} removed", "other": "{0} removed" },
+    "split": "Side by side",
+    "unified": "Line by line",
+    "splitTitle": "Side-by-side view",
+    "unifiedTitle": "Line-by-line view",
+    "before": "Before",
+    "after": "After",
+    "hiddenLines": {
+      "one": "{0} more line hidden to stay responsive.",
+      "other": "{0} more lines hidden to stay responsive."
+    }
+  },
+
+  "toast": {
+    "loadFailed": "Could not load",
+    "loadFailedDesc": "The page could not be fetched.",
+    "unknownError": "Something went wrong.",
+    "retryLater": "Try again in a moment.",
+
+    "missingUrl": "Address missing",
+    "missingUrlDesc": "Paste the address of the page you want to watch.",
+    "invalidUrl": "that address is not valid",
+    "added": "Page added",
+    "addedDesc": "The first check starts shortly.",
+    "addFailed": "Could not add",
+    "addFailedDesc": "Check the address and try again.",
+
+    "paused": "Watch paused",
+    "resumed": "Watching again",
+    "actionFailed": "Action failed",
+    "deleted": "Watch deleted",
+
+    "checkFailed": "Check failed",
+    "changed": "Change detected",
+    "changedDesc": "See the diff below.",
+    "checkImpossible": "Could not run the check",
+
+    "saved": "Configuration saved",
+    "saveFailed": "Could not save",
+    "checkFields": "check the fields you filled in",
+    "loadImpossible": "Could not load"
+  },
+
+  "status": {
+    "label": {
+      "OK": "unchanged",
+      "CHANGED": "changed",
+      "ERROR": "error",
+      "SKIPPED": "skipped"
+    },
+    "paused": "Paused",
+    "neverChecked": "Never checked",
+    "never": "never",
+    "justNow": "just now",
+    "minAgo": "{0} min ago",
+    "hoursAgo": { "one": "{0} hour ago", "other": "{0} hours ago" },
+    "yesterday": "yesterday",
+    "daysAgo": { "one": "{0} day ago", "other": "{0} days ago" },
+    "anyMoment": "any moment now",
+    "inMin": "in {0} min",
+    "inHours": { "one": "in {0} hour", "other": "in {0} hours" },
+    "inDays": { "one": "in {0} day", "other": "in {0} days" },
+    "contentChanged": "content changed ({0} → {1})"
+  }
+}

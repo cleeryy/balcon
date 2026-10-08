@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "titleDefault": "balcon — Webseiten-Überwachung",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon beobachtet deine Webseiten, erkennt Änderungen und benachrichtigt dich per E-Mail oder Webhook.",
+    "footer": "balcon — selbst gehostete Webseiten-Überwachung."
+  },
+
+  "header": {
+    "tagline": "Webseiten-Überwachung",
+    "dashboard": "Übersicht",
+    "githubRepo": "GitHub-Repository",
+    "switchToLight": "Zum hellen Design wechseln",
+    "switchToDark": "Zum dunklen Design wechseln",
+    "themeLight": "Helles Design",
+    "themeDark": "Dunkles Design"
+  },
+
+  "common": {
+    "language": "Sprache",
+    "scrollLeft": "Registerkarten nach links scrollen",
+    "scrollRight": "Registerkarten nach rechts scrollen",
+    "dash": "—"
+  },
+
+  "dashboard": {
+    "eyebrow": "Übersicht",
+    "heading": "Deine Beobachtungen",
+    "intro": "Jede Seite wird planmäßig erneut geprüft. Jede Änderung, jede Störung — alles landet hier.",
+    "updated": "Aktualisiert",
+    "reload": "Neu laden",
+    "reloadLabel": "Liste neu laden",
+
+    "stats": {
+      "total": "Beobachtungen",
+      "totalHint": "überwachte Seiten",
+      "changed": "Änderungen",
+      "changedHint": "letzte Prüfung",
+      "errors": "Fehler",
+      "errorsHint": "fehlerhaft"
+    },
+
+    "form": {
+      "placeholder": "https://example.com/seite-beobachten",
+      "inputLabel": "Adresse der zu beobachtenden Seite",
+      "submit": "Diese Seite beobachten",
+      "hint": "Die Adresse wird standardmäßig alle 30 Minuten geprüft — änderbar auf der Konfigurationsseite."
+    },
+
+    "empty": {
+      "title": "Noch keine Beobachtungen",
+      "description": "Füge oben eine Adresse ein: balcon prüft sie fortlaufend und meldet dir, sobald sich der Inhalt ändert — per E-Mail oder Webhook.",
+      "footnote": "Benachrichtigungen starten nach der ersten Prüfung."
+    },
+
+    "loadError": "Deine Beobachtungen konnten nicht geladen werden",
+    "retry": "Erneut versuchen",
+
+    "search": {
+      "label": "Beobachtungen durchsuchen",
+      "placeholder": "Titel, Adresse oder Tag suchen",
+      "tagsLabel": "Nach Tag filtern",
+      "clear": "Filter zurücksetzen",
+      "results": { "_n": 1, "one": "{0} von {1} Beobachtung", "other": "{0} von {1} Beobachtungen" },
+      "total": { "one": "{0} Beobachtung", "other": "{0} Beobachtungen" },
+      "noMatchTitle": "Keine Beobachtung passt zu deiner Suche",
+      "noMatchBody": "Versuch ein anderes Wort oder setze den Tag-Filter zurück."
+    },
+
+    "io": {
+      "export": "Export",
+      "exportLabel": "Alle Beobachtungen als JSON-Datei herunterladen",
+      "import": "Import",
+      "importLabel": "JSON-Datei mit Beobachtungen hochladen",
+      "exported": "Export heruntergeladen",
+      "exportedDesc": { "one": "{0} Beobachtung in die Datei geschrieben.", "other": "{0} Beobachtungen in die Datei geschrieben." },
+      "exportFailed": "Export fehlgeschlagen",
+      "exportFailedDesc": "Die Liste konnte nicht heruntergeladen werden.",
+      "imported": "Import abgeschlossen",
+      "importedDesc": "{0} hinzugefügt · {1} übersprungen",
+      "importFailed": "Import fehlgeschlagen",
+      "importInvalid": "Die Datei muss ein JSON-Array von Beobachtungen sein."
+    }
+  },
+
+  "form": {
+    "tagsField": "Tags",
+    "tagsPlaceholder": "preise, konkurrenz, news",
+    "tagsHint": "Durch Komma getrennt — die Übersicht kann danach filtern.",
+    "valueRegexField": "Zu extrahierender Wert",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "Die erste Erfassungsgruppe ist der verfolgte Wert.",
+    "options": "Weitere Optionen",
+    "optionsHint": "Extraktion, Benachrichtigungen und Prüffenster.",
+    "notifications": "Benachrichtigungen",
+    "notificationsHint": "Optional — werden gesendet, sobald sich der Inhalt ändert.",
+    "discordField": "Discord-Webhook",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Slack-Webhook",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "Prüffenster",
+    "windowHint": "Prüfungen laufen nur in diesem Fenster.",
+    "windowOff": "Kein Fenster — rund um die Uhr geprüft.",
+    "windowSummary": { "one": "{0} Tag · {1} → {2}", "other": "{0} Tage · {1} → {2}" },
+    "daysLabel": "Wochentage",
+    "from": "Von",
+    "to": "Bis",
+    "clearWindow": "Fenster zurücksetzen",
+    "pauseUntilTomorrow": "Bis morgen pausieren",
+    "resumeNow": "Jetzt fortsetzen",
+    "pausedUntil": "Pausiert bis {0}",
+    "days": {
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa",
+      "sun": "So"
+    }
+  },
+
+  "card": {
+    "checked": "Geprüft",
+    "neverChecked": "Nie geprüft",
+    "everyInterval": "alle {0} Min.",
+    "next": "Nächste",
+    "checkNow": "Jetzt prüfen",
+    "checkNowTitle": "Prüfung sofort ausführen",
+    "pausedTitle": "Diese Beobachtung ist pausiert",
+    "pause": "Pause",
+    "resume": "Fortsetzen",
+    "pauseTitle": "Diese Beobachtung pausieren",
+    "resumeTitle": "Beobachtung fortsetzen",
+    "openSettings": "Konfiguration öffnen",
+    "delete": "Löschen",
+    "deleteTitle": "Löschen",
+    "deleteConfirmTitle": "Zum Löschen erneut klicken",
+    "confirm": "Bestätigen",
+    "deleteLabel": "Diese Beobachtung löschen"
+  },
+
+  "detail": {
+    "backToWatches": "Alle Beobachtungen",
+    "watching": "Beobachtet",
+    "paused": "Pausiert",
+    "manualResume": "manuell fortsetzen",
+    "checkNow": "Jetzt prüfen",
+
+    "summary": {
+      "lastCheck": "Letzte Prüfung",
+      "nextCheck": "Nächste Prüfung",
+      "checks": "Prüfungen",
+      "snapshots": "Momentaufnahmen",
+      "never": "nie",
+      "noChecks": "noch keine Prüfungen",
+      "everyInterval": "alle {0} Min.",
+      "recentCount": { "one": "{0} jüngste", "other": "{0} jüngste" },
+      "keepCount": "letzte 20 behalten",
+      "storedCount": { "one": "{0} gespeichert", "other": "{0} gespeichert" },
+      "contentReady": "Inhalt verfügbar",
+      "onFirstChange": "bei der ersten Änderung"
+    },
+
+    "tabs": {
+      "configuration": "Konfiguration",
+      "checks": "Prüfungen",
+      "snapshots": "Momentaufnahmen"
+    },
+
+    "config": {
+      "title": "Konfiguration",
+      "description": "Änderungen gelten bei der nächsten Prüfung.",
+      "titleField": "Titel",
+      "titlePlaceholder": "z. B. Abo-Preise",
+      "urlField": "Seitenadresse",
+      "urlPlaceholder": "https://example.com/preise",
+      "selectorField": "CSS-Selektor",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "Beschränkt die Überwachung auf einen genauen Bereich der Seite.",
+      "intervalField": "Intervall (Minuten)",
+      "intervalHint": "Mindestens 1 Minute, standardmäßig 30 Minuten.",
+      "ignoreField": "Zu ignorierendes Muster",
+      "ignorePlaceholder": "\\d+ €|aktualisiert",
+      "ignoreHint": "JavaScript-Regex wird im Vergleich ausgelassen — praktisch für Daten und Zähler.",
+      "emailField": "Benachrichtigungs-E-Mail",
+      "emailPlaceholder": "du@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "Speichern",
+      "updatedLast": "Zuletzt aktualisiert"
+    },
+
+    "values": {
+      "title": "Verfolgte Werte",
+      "description": "Jeder vom Extraktionsmuster erfasste Wert, neueste zuerst.",
+      "date": "Datum",
+      "label": "Bezeichnung",
+      "value": "Wert",
+      "change": "Veränderung",
+      "empty": "Noch kein Wert erfasst — lege in der Konfiguration ein Extraktionsmuster an."
+    },
+
+    "row": {
+      "status": "Status",
+      "checked": "Geprüft",
+      "duration": "Dauer",
+      "message": "Meldung",
+      "viewDiff": "Diff ansehen",
+      "noMessage": "—"
+    },
+
+    "metrics": {
+      "title": "Metriken",
+      "http": "HTTP",
+      "backend": "Backend",
+      "fetch": "Abruf",
+      "parse": "Analyse",
+      "size": "HTML → Text",
+      "selector": "Selektor-Treffer",
+      "hash": "Inhalts-Hash",
+      "errorKind": "Fehlerart",
+      "valueMs": "{0} ms",
+      "valueKb": "{0} KB",
+      "valueB": "{0} B",
+      "matches": "{0}"
+    },
+
+    "checks": {
+      "title": "Prüfverlauf",
+      "description": "Die letzten 20 gespeicherten Prüfungen.",
+      "empty": "Noch keine Prüfungen. Starte eine oben auf der Seite."
+    },
+
+    "snapshots": {
+      "title": "Verlauf der Momentaufnahmen",
+      "description": "Der Seitenzustand bei jeder Änderung, aufbewahrt zum Vergleich.",
+      "empty": "Noch keine Momentaufnahme — die erste entsteht, sobald eine Änderung erkannt wird.",
+      "compareHint": "Diese Momentaufnahme mit der neuesten vergleichen"
+    },
+
+    "diff": {
+      "title": "Visueller Vergleich",
+      "description": "Vorherige Version links, aktuelle Version rechts.",
+      "before": "Vorher",
+      "after": "Nachher",
+      "notEnoughTitle": "Nicht genug Momentaufnahmen zum Vergleichen",
+      "notEnoughBody": "Für einen Diff werden zwei gespeicherte Zustände benötigt.",
+      "scrollLabel": "Visueller Vergleich"
+    },
+
+    "notFound": {
+      "title": "Beobachtung nicht gefunden",
+      "description": "Diese Seite wurde entfernt oder gelöscht. Zurück zur Übersicht, um deine anderen Beobachtungen zu finden.",
+      "goBack": "Zurück"
+    }
+  },
+
+  "diff": {
+    "identical": "Die beiden Momentaufnahmen sind identisch — nichts zu sehen.",
+    "added": { "one": "{0} hinzugefügt", "other": "{0} hinzugefügt" },
+    "removed": { "one": "{0} entfernt", "other": "{0} entfernt" },
+    "split": "Nebeneinander",
+    "unified": "Zeile für Zeile",
+    "splitTitle": "Nebeneinander-Ansicht",
+    "unifiedTitle": "Zeile-für-Zeile-Ansicht",
+    "before": "Vorher",
+    "after": "Nachher",
+    "hiddenLines": {
+      "one": "{0} weitere Zeile ausgeblendet, damit es flüssig bleibt.",
+      "other": "{0} weitere Zeilen ausgeblendet, damit es flüssig bleibt."
+    }
+  },
+
+  "toast": {
+    "loadFailed": "Laden fehlgeschlagen",
+    "loadFailedDesc": "Die Seite konnte nicht abgerufen werden.",
+    "unknownError": "Etwas ist schiefgelaufen.",
+    "retryLater": "Versuch es gleich noch einmal.",
+
+    "missingUrl": "Adresse fehlt",
+    "missingUrlDesc": "Füge die Adresse der Seite ein, die du beobachten möchtest.",
+    "invalidUrl": "diese Adresse ist ungültig",
+    "added": "Seite hinzugefügt",
+    "addedDesc": "Die erste Prüfung startet in Kürze.",
+    "addFailed": "Hinzufügen fehlgeschlagen",
+    "addFailedDesc": "Prüfe die Adresse und versuche es erneut.",
+
+    "paused": "Beobachtung pausiert",
+    "resumed": "Wird wieder beobachtet",
+    "actionFailed": "Aktion fehlgeschlagen",
+    "deleted": "Beobachtung gelöscht",
+
+    "checkFailed": "Prüfung fehlgeschlagen",
+    "changed": "Änderung erkannt",
+    "changedDesc": "Sieh dir den Diff unten an.",
+    "checkImpossible": "Prüfung konnte nicht ausgeführt werden",
+
+    "saved": "Konfiguration gespeichert",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "checkFields": "prüfe die ausgefüllten Felder",
+    "loadImpossible": "Laden fehlgeschlagen"
+  },
+
+  "status": {
+    "label": {
+      "OK": "unverändert",
+      "CHANGED": "geändert",
+      "ERROR": "Fehler",
+      "SKIPPED": "übersprungen"
+    },
+    "paused": "Pausiert",
+    "neverChecked": "Nie geprüft",
+    "never": "nie",
+    "justNow": "gerade eben",
+    "minAgo": "vor {0} Min.",
+    "hoursAgo": { "one": "vor {0} Stunde", "other": "vor {0} Stunden" },
+    "yesterday": "gestern",
+    "daysAgo": { "one": "vor {0} Tag", "other": "vor {0} Tagen" },
+    "anyMoment": "jederzeit",
+    "inMin": "in {0} Min.",
+    "inHours": { "one": "in {0} Stunde", "other": "in {0} Stunden" },
+    "inDays": { "one": "in {0} Tag", "other": "in {0} Tagen" },
+    "contentChanged": "Inhalt geändert ({0} → {1})"
+  }
+}

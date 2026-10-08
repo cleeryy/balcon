@@ -3,7 +3,7 @@ import { STATUS_COLOR, statusLabel, statusTone } from "@/components/status";
 
 /**
  * Status pill built on the registry badge: official shape, theme tone,
- * pulsing dot. Everything user-facing comes from `lib/strings.ts`.
+ * pulsing dot. Everything user-facing comes from the `messages/` dictionaries.
  */
 export function StatusBadge({
   status,

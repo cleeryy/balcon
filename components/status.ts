@@ -1,8 +1,6 @@
-import { strings as t } from "@/lib/strings";
+import { currentDict, getActiveLocale } from "@/lib/i18n";
 
 export type CheckStatus = "OK" | "CHANGED" | "ERROR" | "SKIPPED";
-
-export const STATUS_LABEL: Record<string, string> = { ...t.status.label };
 
 /** Colour of the status dot (theme variable, works in light and dark). */
 export const STATUS_COLOR: Record<string, string> = {
@@ -29,13 +27,16 @@ export function statusTone(status?: string | null, active = true): string {
 
 /** Readable status, including the inactive (paused) and never-checked states. */
 export function statusLabel(status?: string | null, active = true): string {
+  const t = currentDict();
   if (!active) return t.status.paused;
   if (!status) return t.status.neverChecked;
-  return STATUS_LABEL[status] ?? status.toLowerCase();
+  const labels = t.status.label as Record<string, string>;
+  return labels[status] ?? status.toLowerCase();
 }
 
 /** "just now", "3 min ago", "yesterday", "8 Oct" — browser clock. */
 export function relativeTime(iso?: string | null): string {
+  const t = currentDict();
   if (!iso) return t.status.never;
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return t.status.never;
@@ -49,11 +50,12 @@ export function relativeTime(iso?: string | null): string {
   const day = Math.round(h / 24);
   if (day === 1) return t.status.yesterday;
   if (day < 7) return t.status.daysAgo(day);
-  return new Date(then).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return new Date(then).toLocaleDateString(getActiveLocale(), { day: "numeric", month: "short" });
 }
 
 /** "in 12 min", "in 3 hours" — for the next scheduled check. */
 export function untilTime(iso?: string | null): string {
+  const t = currentDict();
   if (!iso) return "—";
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "—";
@@ -66,17 +68,25 @@ export function untilTime(iso?: string | null): string {
   return t.status.inDays(Math.round(h / 24));
 }
 
+/** True while `pausedUntil` still lies in the future — the scheduler's rule. */
+export function isPausedUntil(iso?: string | null): boolean {
+  if (!iso) return false;
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return false;
+  return then > Date.now();
+}
+
 /** Backend messages are already English; only the hash arrow is reformatted. */
 export function logMessage(message?: string | null): string {
   if (!message) return "—";
   const change = message.match(/^content changed (\S+) -> (\S+)$/);
-  if (change) return t.status.contentChanged(change[1], change[2]);
+  if (change) return currentDict().status.contentChanged(change[1], change[2]);
   return message;
 }
 
 export function absoluteTime(iso?: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleString("en-GB", {
+  return new Date(iso).toLocaleString(getActiveLocale(), {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

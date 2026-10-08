@@ -1,0 +1,334 @@
+{
+  "meta": {
+    "titleDefault": "balcon — monitoramento de páginas da web",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon monitora suas páginas da web, detecta alterações e avisa por e-mail ou webhook.",
+    "footer": "balcon — monitoramento de páginas da web auto-hospedado."
+  },
+  "header": {
+    "tagline": "monitoramento de páginas da web",
+    "dashboard": "Painel",
+    "githubRepo": "Repositório no GitHub",
+    "switchToLight": "Mudar para o tema claro",
+    "switchToDark": "Mudar para o tema escuro",
+    "themeLight": "Tema claro",
+    "themeDark": "Tema escuro"
+  },
+  "common": {
+    "language": "Idioma",
+    "scrollLeft": "Rolar as abas para a esquerda",
+    "scrollRight": "Rolar as abas para a direita",
+    "dash": "—"
+  },
+  "dashboard": {
+    "eyebrow": "Painel",
+    "heading": "Seus monitoramentos",
+    "intro": "Cada página é verificada em um horário fixo. Qualquer alteração, qualquer falha — tudo aparece aqui.",
+    "updated": "Atualizado",
+    "reload": "Recarregar",
+    "reloadLabel": "Recarregar a lista",
+    "stats": {
+      "total": "Monitoramentos",
+      "totalHint": "páginas acompanhadas",
+      "changed": "Alterações",
+      "changedHint": "última verificação",
+      "errors": "Erros",
+      "errorsHint": "com falha"
+    },
+    "form": {
+      "placeholder": "https://example.com/pagina-para-monitorar",
+      "inputLabel": "Endereço da página a monitorar",
+      "submit": "Monitorar esta página",
+      "hint": "O endereço é verificado a cada 30 minutos por padrão — dá para mudar na página de configuração."
+    },
+    "empty": {
+      "title": "Nenhum monitoramento ainda",
+      "description": "Cole um endereço acima: o balcon continua verificando e avisa assim que o conteúdo mudar — por e-mail ou webhook.",
+      "footnote": "Os avisos começam depois da primeira verificação."
+    },
+    "loadError": "Não foi possível carregar seus monitoramentos",
+    "retry": "Tentar de novo",
+    "search": {
+      "label": "Buscar monitoramentos",
+      "placeholder": "Buscar por título, endereço ou etiqueta",
+      "tagsLabel": "Filtrar por etiqueta",
+      "clear": "Limpar filtros",
+      "results": {
+        "_n": 1,
+        "one": "{0} de {1} monitoramento",
+        "other": "{0} de {1} monitoramentos"
+      },
+      "total": {
+        "one": "{0} monitoramento",
+        "other": "{0} monitoramentos"
+      },
+      "noMatchTitle": "Nenhum monitoramento corresponde à sua busca",
+      "noMatchBody": "Tente outra palavra ou limpe o filtro de etiquetas."
+    },
+    "io": {
+      "export": "Exportar",
+      "exportLabel": "Baixar todos os monitoramentos como arquivo JSON",
+      "import": "Importar",
+      "importLabel": "Enviar um arquivo JSON de monitoramentos",
+      "exported": "Exportação baixada",
+      "exportedDesc": {
+        "one": "{0} monitoramento gravado no arquivo.",
+        "other": "{0} monitoramentos gravados no arquivo."
+      },
+      "exportFailed": "Falha na exportação",
+      "exportFailedDesc": "Não foi possível baixar a lista de monitoramentos.",
+      "imported": "Importação concluída",
+      "importedDesc": "{0} adicionados · {1} ignorados",
+      "importFailed": "Falha na importação",
+      "importInvalid": "O arquivo deve ser uma matriz JSON de monitoramentos."
+    }
+  },
+  "form": {
+    "tagsField": "Etiquetas",
+    "tagsPlaceholder": "preços, concorrência, notícias",
+    "tagsHint": "Separadas por vírgula — o painel pode filtrar por elas.",
+    "valueRegexField": "Valor a extrair",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "O primeiro grupo de captura é o que fica acompanhado.",
+    "options": "Mais opções",
+    "optionsHint": "Extração, avisos e janela de verificação.",
+    "notifications": "Avisos",
+    "notificationsHint": "Opcional — enviados quando o conteúdo muda.",
+    "discordField": "Webhook do Discord",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Webhook do Slack",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "Janela de verificação",
+    "windowHint": "As verificações só rodam dentro desta janela.",
+    "windowOff": "Sem janela — verificado o tempo todo.",
+    "windowSummary": {
+      "one": "{0} dia · {1} → {2}",
+      "other": "{0} dias · {1} → {2}"
+    },
+    "daysLabel": "Dias",
+    "from": "De",
+    "to": "Até",
+    "clearWindow": "Limpar janela",
+    "pauseUntilTomorrow": "Pausar até amanhã",
+    "resumeNow": "Retomar agora",
+    "pausedUntil": "Pausado até {0}",
+    "days": {
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb",
+      "sun": "Dom"
+    }
+  },
+  "card": {
+    "checked": "Verificado",
+    "neverChecked": "Nunca verificado",
+    "everyInterval": "a cada {0} min",
+    "next": "Próxima",
+    "checkNow": "Verificar agora",
+    "checkNowTitle": "Rodar uma verificação agora mesmo",
+    "pausedTitle": "Este monitoramento está pausado",
+    "pause": "Pausar",
+    "resume": "Retomar",
+    "pauseTitle": "Pausar este monitoramento",
+    "resumeTitle": "Retomar o monitoramento",
+    "openSettings": "Abrir a configuração",
+    "delete": "Excluir",
+    "deleteTitle": "Excluir",
+    "deleteConfirmTitle": "Clique de novo para excluir",
+    "confirm": "Confirmar",
+    "deleteLabel": "Excluir este monitoramento"
+  },
+  "detail": {
+    "backToWatches": "Todos os monitoramentos",
+    "watching": "Monitorando",
+    "paused": "Pausado",
+    "manualResume": "retomar manualmente",
+    "checkNow": "Verificar agora",
+    "summary": {
+      "lastCheck": "Última verificação",
+      "nextCheck": "Próxima verificação",
+      "checks": "Verificações",
+      "snapshots": "Instantâneos",
+      "never": "nunca",
+      "noChecks": "ainda sem verificações",
+      "everyInterval": "a cada {0} min",
+      "recentCount": {
+        "one": "{0} recente",
+        "other": "{0} recentes"
+      },
+      "keepCount": "as 20 últimas guardadas",
+      "storedCount": {
+        "one": "{0} guardado",
+        "other": "{0} guardados"
+      },
+      "contentReady": "conteúdo disponível",
+      "onFirstChange": "na primeira alteração"
+    },
+    "tabs": {
+      "configuration": "Configuração",
+      "checks": "Verificações",
+      "snapshots": "Instantâneos"
+    },
+    "config": {
+      "title": "Configuração",
+      "description": "As mudanças valem na próxima verificação.",
+      "titleField": "Título",
+      "titlePlaceholder": "ex.: Preços da assinatura",
+      "urlField": "Endereço da página",
+      "urlPlaceholder": "https://example.com/precos",
+      "selectorField": "Seletor CSS",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "Restringe o monitoramento a uma área exata da página.",
+      "intervalField": "Intervalo (minutos)",
+      "intervalHint": "No mínimo 1 minuto, 30 minutos por padrão.",
+      "ignoreField": "Padrão a ignorar",
+      "ignorePlaceholder": "\\d+ €|atualizado",
+      "ignoreHint": "Regex de JavaScript fora da comparação — útil para datas e contadores.",
+      "emailField": "E-mail de aviso",
+      "emailPlaceholder": "voce@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "Salvar",
+      "updatedLast": "Última atualização"
+    },
+    "values": {
+      "title": "Valores acompanhados",
+      "description": "Cada valor capturado pelo padrão de extração, do mais recente para o mais antigo.",
+      "date": "Data",
+      "label": "Rótulo",
+      "value": "Valor",
+      "change": "Variação",
+      "empty": "Nenhum valor capturado ainda — adicione um padrão de extração na configuração."
+    },
+    "row": {
+      "status": "Status",
+      "checked": "Verificado em",
+      "duration": "Duração",
+      "message": "Mensagem",
+      "viewDiff": "Ver diff",
+      "noMessage": "—"
+    },
+    "metrics": {
+      "title": "Métricas",
+      "http": "HTTP",
+      "backend": "Backend",
+      "fetch": "Busca",
+      "parse": "Análise",
+      "size": "HTML → texto",
+      "selector": "Correspondências do seletor",
+      "hash": "Hash do conteúdo",
+      "errorKind": "Tipo de erro",
+      "valueMs": "{0} ms",
+      "valueKb": "{0} KB",
+      "valueB": "{0} B",
+      "matches": "{0}"
+    },
+    "checks": {
+      "title": "Histórico de verificações",
+      "description": "As 20 últimas verificações registradas.",
+      "empty": "Ainda não há verificações. Execute uma no topo da página."
+    },
+    "snapshots": {
+      "title": "Histórico de instantâneos",
+      "description": "O estado da página salvo a cada alteração, guardado para comparação.",
+      "empty": "Ainda sem instantâneos — o primeiro é criado assim que uma alteração é detectada.",
+      "compareHint": "Comparar este instantâneo com o mais recente"
+    },
+    "diff": {
+      "title": "Comparação visual",
+      "description": "Versão anterior à esquerda, versão atual à direita.",
+      "before": "Antes",
+      "after": "Depois",
+      "notEnoughTitle": "Instantâneos insuficientes para comparar",
+      "notEnoughBody": "São necessários dois estados salvos para gerar um diff.",
+      "scrollLabel": "Comparação visual"
+    },
+    "notFound": {
+      "title": "Monitoramento não encontrado",
+      "description": "Esta página sumiu ou foi excluída. Volte ao painel para encontrar os outros monitoramentos.",
+      "goBack": "Voltar"
+    }
+  },
+  "diff": {
+    "identical": "Os dois instantâneos são idênticos — nada a mostrar.",
+    "added": {
+      "one": "{0} adicionada",
+      "other": "{0} adicionadas"
+    },
+    "removed": {
+      "one": "{0} removida",
+      "other": "{0} removidas"
+    },
+    "split": "Lado a lado",
+    "unified": "Linha a linha",
+    "splitTitle": "Visualização lado a lado",
+    "unifiedTitle": "Visualização linha a linha",
+    "before": "Antes",
+    "after": "Depois",
+    "hiddenLines": {
+      "one": "{0} linha a mais oculta para manter a fluidez.",
+      "other": "{0} linhas a mais ocultas para manter a fluidez."
+    }
+  },
+  "toast": {
+    "loadFailed": "Não foi possível carregar",
+    "loadFailedDesc": "Não foi possível buscar a página.",
+    "unknownError": "Algo deu errado.",
+    "retryLater": "Tente de novo em instantes.",
+    "missingUrl": "Endereço faltando",
+    "missingUrlDesc": "Cole o endereço da página que você quer monitorar.",
+    "invalidUrl": "esse endereço não é válido",
+    "added": "Página adicionada",
+    "addedDesc": "A primeira verificação começa em breve.",
+    "addFailed": "Não foi possível adicionar",
+    "addFailedDesc": "Confira o endereço e tente de novo.",
+    "paused": "Monitoramento pausado",
+    "resumed": "Monitorando de novo",
+    "actionFailed": "A ação falhou",
+    "deleted": "Monitoramento excluído",
+    "checkFailed": "Verificação falhou",
+    "changed": "Alteração detectada",
+    "changedDesc": "Veja o diff abaixo.",
+    "checkImpossible": "Não foi possível executar a verificação",
+    "saved": "Configuração salva",
+    "saveFailed": "Não foi possível salvar",
+    "checkFields": "confira os campos preenchidos",
+    "loadImpossible": "Não foi possível carregar"
+  },
+  "status": {
+    "label": {
+      "OK": "inalterado",
+      "CHANGED": "alterado",
+      "ERROR": "erro",
+      "SKIPPED": "ignorado"
+    },
+    "paused": "Pausado",
+    "neverChecked": "Nunca verificado",
+    "never": "nunca",
+    "justNow": "agora há pouco",
+    "minAgo": "há {0} min",
+    "hoursAgo": {
+      "one": "há {0} hora",
+      "other": "há {0} horas"
+    },
+    "yesterday": "ontem",
+    "daysAgo": {
+      "one": "há {0} dia",
+      "other": "há {0} dias"
+    },
+    "anyMoment": "a qualquer momento",
+    "inMin": "em {0} min",
+    "inHours": {
+      "one": "em {0} hora",
+      "other": "em {0} horas"
+    },
+    "inDays": {
+      "one": "em {0} dia",
+      "other": "em {0} dias"
+    },
+    "contentChanged": "conteúdo alterado ({0} → {1})"
+  }
+}

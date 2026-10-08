@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { diffLines } from "diff";
 import { Columns2, Minus, Plus, Rows3 } from "lucide-react";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 import { cn } from "@/lib/utils";
 
 const MAX_ROWS = 600;
@@ -74,6 +74,7 @@ const cellClass = (type: Row["type"], side: "left" | "right") =>
   );
 
 export function DiffView({ before, after }: { before: string; after: string }) {
+  const t = useDict();
   const [mode, setMode] = useState<"split" | "unified">("split");
   const narrow = useIsNarrow();
 

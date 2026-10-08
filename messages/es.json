@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "titleDefault": "balcon — vigilancia de páginas web",
+    "titleTemplate": "%s · balcon",
+    "description": "balcon vigila tus páginas web, detecta cambios y te avisa por correo o webhook.",
+    "footer": "balcon — vigilancia de páginas web autoalojada."
+  },
+
+  "header": {
+    "tagline": "vigilancia de páginas web",
+    "dashboard": "Panel",
+    "githubRepo": "Repositorio de GitHub",
+    "switchToLight": "Cambiar a tema claro",
+    "switchToDark": "Cambiar a tema oscuro",
+    "themeLight": "Tema claro",
+    "themeDark": "Tema oscuro"
+  },
+
+  "common": {
+    "language": "Idioma",
+    "scrollLeft": "Desplazar pestañas a la izquierda",
+    "scrollRight": "Desplazar pestañas a la derecha",
+    "dash": "—"
+  },
+
+  "dashboard": {
+    "eyebrow": "Panel",
+    "heading": "Tus vigilancias",
+    "intro": "Cada página se revisa según un horario. Cualquier cambio, cualquier caída — todo aparece aquí.",
+    "updated": "Actualizado",
+    "reload": "Recargar",
+    "reloadLabel": "Recargar la lista",
+
+    "stats": {
+      "total": "Vigilancias",
+      "totalHint": "páginas vigiladas",
+      "changed": "Cambios",
+      "changedHint": "última revisión",
+      "errors": "Errores",
+      "errorsHint": "con fallos"
+    },
+
+    "form": {
+      "placeholder": "https://example.com/pagina-a-vigilar",
+      "inputLabel": "Dirección de la página a vigilar",
+      "submit": "Vigilar esta página",
+      "hint": "La dirección se revisa cada 30 minutos por defecto — puedes cambiarlo en la página de configuración."
+    },
+
+    "empty": {
+      "title": "Aún no hay vigilancias",
+      "description": "Pega una dirección arriba: balcon la sigue revisando y te avisa en cuanto cambia el contenido — por correo o webhook.",
+      "footnote": "Las notificaciones empiezan tras la primera revisión."
+    },
+
+    "loadError": "No pudimos cargar tus vigilancias",
+    "retry": "Reintentar",
+
+    "search": {
+      "label": "Buscar vigilancias",
+      "placeholder": "Buscar un título, una dirección o una etiqueta",
+      "tagsLabel": "Filtrar por etiqueta",
+      "clear": "Quitar filtros",
+      "results": { "_n": 1, "one": "{0} de {1} vigilancia", "other": "{0} de {1} vigilancias" },
+      "total": { "one": "{0} vigilancia", "other": "{0} vigilancias" },
+      "noMatchTitle": "Ninguna vigilancia coincide con tu búsqueda",
+      "noMatchBody": "Prueba con otra palabra o quita el filtro de etiquetas."
+    },
+
+    "io": {
+      "export": "Exportar",
+      "exportLabel": "Descargar todas las vigilancias como archivo JSON",
+      "import": "Importar",
+      "importLabel": "Subir un archivo JSON de vigilancias",
+      "exported": "Exportación descargada",
+      "exportedDesc": { "one": "{0} vigilancia escrita en el archivo.", "other": "{0} vigilancias escritas en el archivo." },
+      "exportFailed": "Falló la exportación",
+      "exportFailedDesc": "No se pudo descargar la lista de vigilancias.",
+      "imported": "Importación completada",
+      "importedDesc": "{0} añadidas · {1} omitidas",
+      "importFailed": "Falló la importación",
+      "importInvalid": "El archivo debe ser un array JSON de vigilancias."
+    }
+  },
+
+  "form": {
+    "tagsField": "Etiquetas",
+    "tagsPlaceholder": "precios, competencia, noticias",
+    "tagsHint": "Separadas por comas — el panel puede filtrar por ellas.",
+    "valueRegexField": "Valor a extraer",
+    "valueRegexPlaceholder": "\\d+\\.\\d+ €",
+    "valueRegexHint": "El primer grupo de captura es el que se sigue.",
+    "options": "Más opciones",
+    "optionsHint": "Extracción, notificaciones y franja de revisión.",
+    "notifications": "Notificaciones",
+    "notificationsHint": "Opcional — se envían cuando cambia el contenido.",
+    "discordField": "Webhook de Discord",
+    "discordPlaceholder": "https://discord.com/api/webhooks/...",
+    "slackField": "Webhook de Slack",
+    "slackPlaceholder": "https://hooks.slack.com/services/...",
+    "windowTitle": "Franja de revisión",
+    "windowHint": "Las revisiones solo se ejecutan dentro de esta franja.",
+    "windowOff": "Sin franja — revisado las 24 horas.",
+    "windowSummary": { "one": "{0} día · {1} → {2}", "other": "{0} días · {1} → {2}" },
+    "daysLabel": "Días",
+    "from": "De",
+    "to": "A",
+    "clearWindow": "Quitar franja",
+    "pauseUntilTomorrow": "Pausar hasta mañana",
+    "resumeNow": "Reanudar ahora",
+    "pausedUntil": "En pausa hasta {0}",
+    "days": {
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb",
+      "sun": "Dom"
+    }
+  },
+
+  "card": {
+    "checked": "Revisada",
+    "neverChecked": "Nunca revisada",
+    "everyInterval": "cada {0} min",
+    "next": "Siguiente",
+    "checkNow": "Revisar ahora",
+    "checkNowTitle": "Ejecutar una revisión ya mismo",
+    "pausedTitle": "Esta vigilancia está en pausa",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "pauseTitle": "Pausar esta vigilancia",
+    "resumeTitle": "Reanudar la vigilancia",
+    "openSettings": "Abrir la configuración",
+    "delete": "Eliminar",
+    "deleteTitle": "Eliminar",
+    "deleteConfirmTitle": "Haz clic otra vez para eliminar",
+    "confirm": "Confirmar",
+    "deleteLabel": "Eliminar esta vigilancia"
+  },
+
+  "detail": {
+    "backToWatches": "Todas las vigilancias",
+    "watching": "Vigilando",
+    "paused": "En pausa",
+    "manualResume": "reanudar manualmente",
+    "checkNow": "Revisar ahora",
+
+    "summary": {
+      "lastCheck": "Última revisión",
+      "nextCheck": "Próxima revisión",
+      "checks": "Revisiones",
+      "snapshots": "Instantáneas",
+      "never": "nunca",
+      "noChecks": "aún sin revisiones",
+      "everyInterval": "cada {0} min",
+      "recentCount": { "one": "{0} reciente", "other": "{0} recientes" },
+      "keepCount": "se conservan las 20 últimas",
+      "storedCount": { "one": "{0} guardada", "other": "{0} guardadas" },
+      "contentReady": "contenido disponible",
+      "onFirstChange": "en el primer cambio"
+    },
+
+    "tabs": {
+      "configuration": "Configuración",
+      "checks": "Revisiones",
+      "snapshots": "Instantáneas"
+    },
+
+    "config": {
+      "title": "Configuración",
+      "description": "Los cambios se aplican en la próxima revisión.",
+      "titleField": "Título",
+      "titlePlaceholder": "p. ej. Precios de suscripción",
+      "urlField": "Dirección de la página",
+      "urlPlaceholder": "https://example.com/precios",
+      "selectorField": "Selector CSS",
+      "selectorPlaceholder": "main .price",
+      "selectorHint": "Limita la vigilancia a una zona concreta de la página.",
+      "intervalField": "Intervalo (minutos)",
+      "intervalHint": "Mínimo 1 minuto, 30 minutos por defecto.",
+      "ignoreField": "Patrón a ignorar",
+      "ignorePlaceholder": "\\d+ €|actualizado",
+      "ignoreHint": "Regex de JavaScript fuera de la comparación — útil para fechas y contadores.",
+      "emailField": "Correo de notificación",
+      "emailPlaceholder": "tu@example.com",
+      "webhookField": "Webhook",
+      "webhookPlaceholder": "https://hooks.example.com/...",
+      "save": "Guardar",
+      "updatedLast": "Última actualización"
+    },
+
+    "values": {
+      "title": "Valores vigilados",
+      "description": "Cada valor capturado por el patrón de extracción, del más reciente al más antiguo.",
+      "date": "Fecha",
+      "label": "Etiqueta",
+      "value": "Valor",
+      "change": "Variación",
+      "empty": "Aún no se ha capturado ningún valor — añade un patrón de extracción en la configuración."
+    },
+
+    "row": {
+      "status": "Estado",
+      "checked": "Revisado",
+      "duration": "Duración",
+      "message": "Mensaje",
+      "viewDiff": "Ver diff",
+      "noMessage": "—"
+    },
+
+    "metrics": {
+      "title": "Métricas",
+      "http": "HTTP",
+      "backend": "Backend",
+      "fetch": "Descarga",
+      "parse": "Análisis",
+      "size": "HTML → texto",
+      "selector": "Coincidencias del selector",
+      "hash": "Hash del contenido",
+      "errorKind": "Tipo de error",
+      "valueMs": "{0} ms",
+      "valueKb": "{0} KB",
+      "valueB": "{0} B",
+      "matches": "{0}"
+    },
+
+    "checks": {
+      "title": "Historial de revisiones",
+      "description": "Las 20 últimas revisiones registradas.",
+      "empty": "Aún no hay revisiones. Ejecuta una desde la parte superior de la página."
+    },
+
+    "snapshots": {
+      "title": "Historial de instantáneas",
+      "description": "El estado de la página guardado en cada cambio, conservado para comparar.",
+      "empty": "Aún no hay instantáneas — la primera se crea en cuanto se detecta un cambio.",
+      "compareHint": "Comparar esta instantánea con la más reciente"
+    },
+
+    "diff": {
+      "title": "Comparación visual",
+      "description": "Versión anterior a la izquierda, versión actual a la derecha.",
+      "before": "Antes",
+      "after": "Después",
+      "notEnoughTitle": "No hay suficientes instantáneas para comparar",
+      "notEnoughBody": "Se necesitan dos estados guardados para mostrar un diff.",
+      "scrollLabel": "Comparación visual"
+    },
+
+    "notFound": {
+      "title": "Vigilancia no encontrada",
+      "description": "Esta página ya no existe o fue eliminada. Vuelve al panel para encontrar tus otras vigilancias.",
+      "goBack": "Volver"
+    }
+  },
+
+  "diff": {
+    "identical": "Las dos instantáneas son idénticas — nada que mostrar.",
+    "added": { "one": "{0} añadida", "other": "{0} añadidas" },
+    "removed": { "one": "{0} eliminada", "other": "{0} eliminadas" },
+    "split": "Lado a lado",
+    "unified": "Línea a línea",
+    "splitTitle": "Vista lado a lado",
+    "unifiedTitle": "Vista línea a línea",
+    "before": "Antes",
+    "after": "Después",
+    "hiddenLines": {
+      "one": "{0} línea más oculta para mantener la fluidez.",
+      "other": "{0} líneas más ocultas para mantener la fluidez."
+    }
+  },
+
+  "toast": {
+    "loadFailed": "No se pudo cargar",
+    "loadFailedDesc": "No se pudo obtener la página.",
+    "unknownError": "Algo salió mal.",
+    "retryLater": "Inténtalo de nuevo en un momento.",
+
+    "missingUrl": "Falta la dirección",
+    "missingUrlDesc": "Pega la dirección de la página que quieres vigilar.",
+    "invalidUrl": "esa dirección no es válida",
+    "added": "Página añadida",
+    "addedDesc": "La primera revisión empieza en breve.",
+    "addFailed": "No se pudo añadir",
+    "addFailedDesc": "Revisa la dirección e inténtalo de nuevo.",
+
+    "paused": "Vigilancia en pausa",
+    "resumed": "Vigilando otra vez",
+    "actionFailed": "La acción falló",
+    "deleted": "Vigilancia eliminada",
+
+    "checkFailed": "La revisión falló",
+    "changed": "Cambio detectado",
+    "changedDesc": "Mira el diff de abajo.",
+    "checkImpossible": "No se pudo ejecutar la revisión",
+
+    "saved": "Configuración guardada",
+    "saveFailed": "No se pudo guardar",
+    "checkFields": "revisa los campos rellenados",
+    "loadImpossible": "No se pudo cargar"
+  },
+
+  "status": {
+    "label": {
+      "OK": "sin cambios",
+      "CHANGED": "cambiado",
+      "ERROR": "error",
+      "SKIPPED": "omitido"
+    },
+    "paused": "En pausa",
+    "neverChecked": "Nunca revisada",
+    "never": "nunca",
+    "justNow": "ahora mismo",
+    "minAgo": "hace {0} min",
+    "hoursAgo": { "one": "hace {0} hora", "other": "hace {0} horas" },
+    "yesterday": "ayer",
+    "daysAgo": { "one": "hace {0} día", "other": "hace {0} días" },
+    "anyMoment": "en cualquier momento",
+    "inMin": "en {0} min",
+    "inHours": { "one": "en {0} hora", "other": "en {0} horas" },
+    "inDays": { "one": "en {0} día", "other": "en {0} días" },
+    "contentChanged": "contenido cambiado ({0} → {1})"
+  }
+}

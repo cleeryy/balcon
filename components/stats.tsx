@@ -3,7 +3,7 @@ import { CircleAlert, RefreshCw, ScanEye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NumberTicker } from "@/components/motion/number-ticker";
-import { strings as t } from "@/lib/strings";
+import { useDict } from "@/components/locale-provider";
 import { cn } from "@/lib/utils";
 
 interface Stat {
@@ -25,6 +25,7 @@ export function Stats({
   errors: number;
   loading: boolean;
 }) {
+  const t = useDict();
   const stats: Stat[] = [
     {
       label: t.dashboard.stats.total,
