@@ -64,11 +64,15 @@ export async function checkWatch(watchId: string): Promise<CheckOutcome> {
   const fetched = await fetchPage(watch.url);
   if (!fetched.ok) {
     const durationMs = Date.now() - started;
+    // Message affichable tel quel dans l'UI : erreur backend + statut HTTP (schéma inchangé).
+    const base = fetched.error ?? `HTTP ${fetched.status}`;
+    const message =
+      fetched.status > 0 && !/HTTP \d{3}/.test(base) ? `${base} (HTTP ${fetched.status})` : base;
     await prisma.checkLog.create({
-      data: { watchId, status: "ERROR", message: fetched.error ?? `HTTP ${fetched.status}`, durationMs },
+      data: { watchId, status: "ERROR", message, durationMs },
     });
     await prisma.watch.update({ where: { id: watchId }, data: { nextCheckAt: nextCheckDate(watch.intervalMin) } });
-    return { status: "ERROR", message: fetched.error, durationMs };
+    return { status: "ERROR", message, durationMs };
   }
 
   const content = extractContent(fetched.html, watch.selector, watch.ignoreRegex);
