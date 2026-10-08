@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🪟 balcon
 
-## Getting Started
+Clone moderne de [changedetection.io](https://github.com/dgtlmoon/changedetection.io) : surveillez des pages web, détectez les changements, recevez des notifications.
 
-First, run the development server:
+Stack : **Next.js 16** (App Router, TS strict, Tailwind v4, shadcn) · **Prisma + SQLite** · sidecar **fetcher Python FastAPI + curl_cffi** · **node-cron** in-process · Docker/Dokploy ready.
+
+## Run local
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env
+npm install
+npx prisma migrate dev --name init
+npm run db:seed   # 1 watch exemple (ou: npx prisma db seed)
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sidecar fetcher (optionnel en dev, requis pour les checks) :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pip install -r fetcher/requirements.txt
+uvicorn main:app --app-dir fetcher --port 8000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run Docker (recommandé)
 
-## Learn More
+```bash
+cp .env.example .env
+docker compose up --build -d
+# web: http://localhost:3000 — volume persistant balcon-data:/app/data
+# profil FlareSolverr (optionnel) :
+ENABLE_FLARESOLVERR=true docker compose --profile flaresolverr up --build -d
+```
 
-To learn more about Next.js, take a look at the following resources:
+Migrations en prod (SQLite, volume persistant) :
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+docker compose exec web npx prisma migrate deploy
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Déploiement Dokploy
 
-## Deploy on Vercel
+1. Nouveau service **Dockerfile** pointant sur ce repo (`cleeryy/balcon`).
+2. Volume : `/app/data` (persistance `balcon.db`).
+3. Variables d'environnement :
+   - `DATABASE_URL=file:/app/data/balcon.db`
+   - `FETCHER_URL=http://fetcher:8000`
+   - `ENABLE_FLARESOLVERR=false` (+ service FlareSolverr si besoin)
+   - `SMTP_*` pour les notifications email.
+4. Le sidecar `fetcher` est défini dans `docker-compose.yml` (service interne).
+5. Healthcheck : `GET /api/health`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Alternative Dokploy : déployer via **Docker Compose** en collant le contenu de `docker-compose.yml`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API
+
+| Route | Méthode | Description |
+|---|---|---|
+| `/api/health` | GET | healthcheck |
+| `/api/watches` | GET/POST | liste / création |
+| `/api/watches/[id]` | GET/PATCH/DELETE | détail / màj / suppression |
+| `/api/watches/[id]/check` | POST | vérification manuelle |
+| `/api/watches/[id]/snapshots` | GET | 20 derniers snapshots décompressés |
+| `/api/cron` | GET/POST | déclenche les checks dus |
+
+Chaîne de fetch : `fetcher curl_cffi (10s)` → `FlareSolverr optionnel si CF (15s)` → erreur propre. Pas de Playwright en V1.

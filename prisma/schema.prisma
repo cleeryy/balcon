@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Watch {
+  id          String    @id @default(cuid())
+  url         String
+  title       String?
+  selector    String?
+  ignoreRegex String?
+  intervalMin Int       @default(30)
+  active      Boolean   @default(true)
+  webhookUrl  String?
+  email       String?
+  nextCheckAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  snapshots   Snapshot[]
+  checkLogs   CheckLog[]
+}
+
+model Snapshot {
+  id        String   @id @default(cuid())
+  watchId   String
+  watch     Watch    @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  hash      String
+  content   Bytes
+  createdAt DateTime @default(now())
+
+  @@index([watchId, createdAt])
+}
+
+model CheckLog {
+  id         String   @id @default(cuid())
+  watchId    String
+  watch      Watch    @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  status     String
+  message    String?
+  durationMs Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([watchId, createdAt])
+}
