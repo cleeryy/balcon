@@ -1,19 +1,35 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ToastProvider } from "@/components/toast-provider";
+import { SiteHeader } from "@/components/site-header";
 
-export const metadata: Metadata = { title: "balcon", description: "Clone moderne de changedetection.io" };
+export const metadata: Metadata = {
+  title: {
+    default: "balcon — veille de pages web",
+    template: "%s · balcon",
+  },
+  description:
+    "balcon surveille vos pages web, détecte les changements et vous prévient par email ou webhook.",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
-      <body className="min-h-screen bg-neutral-50 text-neutral-900 antialiased">
-        <header className="border-b bg-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <a href="/" className="text-lg font-bold tracking-tight">🪟 balcon</a>
-            <span className="text-xs text-neutral-500">surveillance de pages web</span>
-          </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+    <html lang="fr" suppressHydrationWarning>
+      <body className="min-h-screen">
+        <div className="app-backdrop" aria-hidden="true" />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SiteHeader />
+          <main className="mx-auto w-full max-w-6xl px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
+            {children}
+          </main>
+          <footer className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6">
+            <p className="border-t border-border pt-5 text-xs text-muted-foreground">
+              balcon — veille de pages web, hébergée chez vous.
+            </p>
+          </footer>
+          <ToastProvider />
+        </ThemeProvider>
       </body>
     </html>
   );
