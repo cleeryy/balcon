@@ -4,10 +4,11 @@ import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { strings as t } from "@/lib/strings";
 
 const emptySubscribe = () => () => {};
 
-/** Vrai côté navigateur, faux côté serveur (évite le décalage d'hydratation). */
+/** True in the browser, false on the server (avoids the hydration mismatch). */
 function useMounted() {
   return useSyncExternalStore(
     emptySubscribe,
@@ -25,8 +26,8 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="icon-sm"
-      aria-label={isDark ? "Passer en thème clair" : "Passer en thème sombre"}
-      title={isDark ? "Thème clair" : "Thème sombre"}
+      aria-label={isDark ? t.header.switchToLight : t.header.switchToDark}
+      title={isDark ? t.header.themeLight : t.header.themeDark}
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="relative overflow-hidden"
     >

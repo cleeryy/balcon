@@ -11,6 +11,7 @@ import { Stats } from "@/components/stats";
 import { WatchCard } from "@/components/watch-card";
 import { EmptyState } from "@/components/empty-state";
 import { relativeTime } from "@/components/status";
+import { strings as t } from "@/lib/strings";
 import type { Watch, WatchSummary } from "@/components/types";
 
 function normalizeUrl(raw: string) {
@@ -22,7 +23,7 @@ function normalizeUrl(raw: string) {
 
 async function loadWatches(): Promise<WatchSummary[]> {
   const res = await fetch("/api/watches", { cache: "no-store" });
-  if (!res.ok) throw new Error("Impossible de charger les surveillances.");
+  if (!res.ok) throw new Error(t.toast.loadFailedDesc);
   const list: Watch[] = await res.json();
 
   const enriched: WatchSummary[] = [];
@@ -69,22 +70,22 @@ export default function Home() {
       setLoadedAt(new Date());
       setError(null);
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Une erreur est survenue.";
+      const message = e instanceof Error ? e.message : t.toast.unknownError;
       setError(message);
-      toast.error("Chargement impossible", { description: message });
+      toast.error(t.toast.loadFailed, { description: message });
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Chargement initial : délégué à une promesse, pour éviter tout setState synchrone dans l'effet.
+  // Initial load: delegated to a promise, so no setState runs inside the effect.
   useEffect(() => {
     void (async () => {
       await load();
     })();
   }, [load]);
 
-  /** Rechargement explicite : on affiche le squelette le temps du fetch. */
+  /** Explicit refresh: show the skeleton while the fetch runs. */
   function reload() {
     setLoading(true);
     void load();
@@ -94,7 +95,7 @@ export default function Home() {
     e.preventDefault();
     const target = normalizeUrl(url);
     if (!target) {
-      toast.error("Adresse manquante", { description: "Collez l'adresse de la page à suivre." });
+      toast.error(t.toast.missingUrl, { description: t.toast.missingUrlDesc });
       return;
     }
     setAdding(true);
@@ -106,14 +107,14 @@ export default function Home() {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "l'adresse n'est pas valide");
+        throw new Error(body?.error ?? t.toast.invalidUrl);
       }
       setUrl("");
-      toast.success("Page ajoutée", { description: "La première vérification démarre sous peu." });
+      toast.success(t.toast.added, { description: t.toast.addedDesc });
       await load();
     } catch (err) {
-      toast.error("Ajout impossible", {
-        description: err instanceof Error ? err.message : "Erreur inconnue.",
+      toast.error(t.toast.addFailed, {
+        description: err instanceof Error ? err.message : t.toast.addFailedDesc,
       });
     } finally {
       setAdding(false);
@@ -128,12 +129,12 @@ export default function Home() {
         body: JSON.stringify({ active: !w.active }),
       });
       if (!res.ok) throw new Error();
-      toast.success(w.active ? "Surveillance en pause" : "Surveillance reprise", {
+      toast.success(w.active ? t.toast.paused : t.toast.resumed, {
         description: w.title || w.url,
       });
       await load();
     } catch {
-      toast.error("Action impossible", { description: "Réessayez dans un instant." });
+      toast.error(t.toast.actionFailed, { description: t.toast.retryLater });
     }
   }
 
@@ -141,10 +142,10 @@ export default function Home() {
     try {
       const res = await fetch(`/api/watches/${w.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error();
-      toast.success("Surveillance supprimée", { description: w.title || w.url });
+      toast.success(t.toast.deleted, { description: w.title || w.url });
       await load();
     } catch {
-      toast.error("Suppression impossible", { description: "Réessayez dans un instant." });
+      toast.error(t.toast.actionFailed, { description: t.toast.retryLater });
     }
   }
 
@@ -155,13 +156,13 @@ export default function Home() {
       const result = await res.json().catch(() => null);
       if (!res.ok && result?.status !== "ERROR") throw new Error();
       if (result?.status === "ERROR") {
-        toast.error("Vérification en échec", { description: result.message || w.url });
+        toast.error(t.toast.checkFailed, { description: result.message || w.url });
       } else if (result?.status === "CHANGED") {
-        toast.warning("Changement détecté", { description: w.title || w.url });
+        toast.warning(t.toast.changed, { description: w.title || w.url });
       }
       await load();
     } catch {
-      toast.error("Vérification impossible", { description: "Réessayez dans un instant." });
+      toast.error(t.toast.checkImpossible, { description: t.toast.retryLater });
     } finally {
       setCheckingId(null);
     }
@@ -181,27 +182,30 @@ export default function Home() {
       <section className="animate-rise flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">
-            Tableau de bord
+            {t.dashboard.eyebrow}
           </p>
           <h1 className="font-display mt-1.5 text-3xl font-bold tracking-tight sm:text-4xl">
-            Vos surveillances
+            {t.dashboard.heading}
           </h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-            Chaque page est revérifiée automatiquement. Le moindre changement, la moindre panne :
-            tout est signalé ici.
+            {t.dashboard.intro}
           </p>
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {loadedAt && <span>Mis à jour {relativeTime(loadedAt.toISOString())}</span>}
+          {loadedAt && (
+            <span>
+              {t.dashboard.updated} {relativeTime(loadedAt.toISOString())}
+            </span>
+          )}
           <Button
             variant="outline"
             size="sm"
             onClick={reload}
             disabled={loading}
-            aria-label="Recharger la liste"
+            aria-label={t.dashboard.reloadLabel}
           >
             <RefreshCw className={loading ? "animate-spin" : undefined} />
-            Recharger
+            {t.dashboard.reload}
           </Button>
         </div>
       </section>
@@ -214,8 +218,8 @@ export default function Home() {
               <Input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com/page-a-surveiller"
-                aria-label="Adresse de la page à surveiller"
+                placeholder={t.dashboard.form.placeholder}
+                aria-label={t.dashboard.form.inputLabel}
                 className="h-11 pl-9 font-mono text-sm"
                 autoComplete="off"
                 spellCheck={false}
@@ -223,13 +227,10 @@ export default function Home() {
             </div>
             <Button type="submit" disabled={adding} className="h-11 sm:w-auto">
               {adding ? <span className="btn-spinner" aria-hidden="true" /> : <Plus />}
-              Surveiller cette page
+              {t.dashboard.form.submit}
             </Button>
           </form>
-          <p className="mt-3 text-xs text-muted-foreground">
-            L’adresse est vérifiée toutes les 30 minutes par défaut — modifiable ensuite sur la
-            page de configuration.
-          </p>
+          <p className="mt-3 text-xs text-muted-foreground">{t.dashboard.form.hint}</p>
         </CardContent>
       </Card>
 
@@ -246,13 +247,13 @@ export default function Home() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
               <div>
-                <p className="font-display font-semibold">La liste n’a pas pu être chargée</p>
+                <p className="font-display font-semibold">{t.dashboard.loadError}</p>
                 <p className="text-sm text-muted-foreground">{error}</p>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => void load()}>
               <RefreshCw />
-              Réessayer
+              {t.dashboard.retry}
             </Button>
           </CardContent>
         </Card>
@@ -286,12 +287,12 @@ export default function Home() {
       ) : !error && watches.length === 0 ? (
         <EmptyState
           icon={Radar}
-          title="Aucune surveillance pour l'instant"
-          description="Collez une adresse ci-dessus : balcon la vérifiera en continu et vous préviendra dès que le contenu change — email ou webhook."
+          title={t.dashboard.empty.title}
+          description={t.dashboard.empty.description}
         >
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <BellRing className="h-4 w-4 text-primary" />
-            Les notifications démarrent après la première vérification.
+            {t.dashboard.empty.footnote}
           </div>
         </EmptyState>
       ) : (

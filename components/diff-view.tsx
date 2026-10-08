@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { diffLines } from "diff";
 import { Columns2, Minus, Plus, Rows3 } from "lucide-react";
+import { strings as t } from "@/lib/strings";
 import { cn } from "@/lib/utils";
 
 const MAX_ROWS = 600;
@@ -92,7 +93,7 @@ export function DiffView({ before, after }: { before: string; after: string }) {
   if (allRows.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-        Les deux snapshots sont identiques, rien à afficher.
+        {t.diff.identical}
       </p>
     );
   }
@@ -102,11 +103,11 @@ export function DiffView({ before, after }: { before: string; after: string }) {
       <div className="flex flex-wrap items-center gap-3 border-b border-border bg-card-highlight px-3 py-2.5">
         <span className="inline-flex items-center gap-1.5 rounded-md bg-success-soft px-2 py-1 text-xs font-semibold text-success">
           <Plus className="h-3.5 w-3.5" />
-          {counts.added} ajoutée{counts.added > 1 ? "s" : ""}
+          {t.diff.added(counts.added)}
         </span>
         <span className="inline-flex items-center gap-1.5 rounded-md bg-destructive-soft px-2 py-1 text-xs font-semibold text-destructive">
           <Minus className="h-3.5 w-3.5" />
-          {counts.removed} supprimée{counts.removed > 1 ? "s" : ""}
+          {t.diff.removed(counts.removed)}
         </span>
 
         <div className="ml-auto inline-flex rounded-lg border border-border bg-card p-0.5">
@@ -114,20 +115,20 @@ export function DiffView({ before, after }: { before: string; after: string }) {
             type="button"
             onClick={() => setMode("split")}
             aria-pressed={split}
-            title="Vue côte à côte"
+            title={t.diff.splitTitle}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors",
               split ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"
             )}
           >
             <Columns2 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Côte à côte</span>
+            <span className="hidden sm:inline">{t.diff.split}</span>
           </button>
           <button
             type="button"
             onClick={() => setMode("unified")}
             aria-pressed={!split}
-            title="Vue ligne à ligne"
+            title={t.diff.unifiedTitle}
             className={cn(
               "inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold transition-colors",
               !split
@@ -136,7 +137,7 @@ export function DiffView({ before, after }: { before: string; after: string }) {
             )}
           >
             <Rows3 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Ligne à ligne</span>
+            <span className="hidden sm:inline">{t.diff.unified}</span>
           </button>
         </div>
       </div>
@@ -145,10 +146,10 @@ export function DiffView({ before, after }: { before: string; after: string }) {
         {split && (
           <div className="sticky top-0 z-10 grid grid-cols-2 border-b border-border bg-card/95 backdrop-blur">
             <div className="border-r border-border px-3 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-              Avant
+              {t.diff.before}
             </div>
             <div className="px-3 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-              Après
+              {t.diff.after}
             </div>
           </div>
         )}
@@ -199,7 +200,7 @@ export function DiffView({ before, after }: { before: string; after: string }) {
 
       {truncated && (
         <div className="border-t border-border bg-card-highlight px-3 py-2 text-xs text-muted-foreground">
-          {allRows.length - MAX_ROWS} lignes supplémentaires masquées pour rester réactif.
+          {t.diff.hiddenLines(allRows.length - MAX_ROWS)}
         </div>
       )}
 

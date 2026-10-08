@@ -2,6 +2,8 @@ import type { LucideIcon } from "lucide-react";
 import { CircleAlert, RefreshCw, ScanEye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NumberTicker } from "@/components/motion/number-ticker";
+import { strings as t } from "@/lib/strings";
 import { cn } from "@/lib/utils";
 
 interface Stat {
@@ -25,22 +27,22 @@ export function Stats({
 }) {
   const stats: Stat[] = [
     {
-      label: "Surveillances",
-      hint: "pages suivies",
+      label: t.dashboard.stats.total,
+      hint: t.dashboard.stats.totalHint,
       value: total,
       icon: ScanEye,
       tone: "text-primary",
     },
     {
-      label: "Changements",
-      hint: "dernier check",
+      label: t.dashboard.stats.changed,
+      hint: t.dashboard.stats.changedHint,
       value: changed,
       icon: RefreshCw,
       tone: "text-warning",
     },
     {
-      label: "Erreurs",
-      hint: "en échec",
+      label: t.dashboard.stats.errors,
+      hint: t.dashboard.stats.errorsHint,
       value: errors,
       icon: CircleAlert,
       tone: "text-destructive",
@@ -62,7 +64,7 @@ export function Stats({
               <Skeleton className="mt-3 h-8 w-14 sm:h-10 sm:w-16" />
             ) : (
               <p className={cn("font-display mt-2 text-2xl font-bold leading-none sm:text-4xl", s.tone)}>
-                {s.value}
+                <NumberTicker value={s.value} startOnView={false} duration={0.7} />
               </p>
             )}
             <p className="mt-1.5 hidden text-xs text-muted-foreground sm:block">{s.hint}</p>

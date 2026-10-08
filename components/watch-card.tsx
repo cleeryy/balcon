@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Pause, Play, RefreshCw, Settings2, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { SiteFavicon } from "@/components/site-favicon";
-import { STATUS_COLOR, relativeTime, statusLabel, untilTime } from "@/components/status";
+import { StatusBadge } from "@/components/status-badge";
+import { relativeTime, untilTime } from "@/components/status";
+import { strings as t } from "@/lib/strings";
 import type { WatchSummary } from "@/components/types";
 
 export function WatchCard({
@@ -29,24 +30,11 @@ export function WatchCard({
 
   useEffect(() => {
     if (!confirming) return;
-    const t = setTimeout(() => setConfirming(false), 3500);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setConfirming(false), 3500);
+    return () => clearTimeout(timer);
   }, [confirming]);
 
   const isActive = watch.active;
-  const statusText = isActive ? statusLabel(watch.lastStatus) : "en pause";
-  const statusVariant = !isActive
-    ? "muted"
-    : watch.lastStatus === "ERROR"
-      ? "destructive"
-      : watch.lastStatus === "CHANGED"
-        ? "warning"
-        : watch.lastStatus === "OK"
-          ? "success"
-          : "muted";
-  const dotColor = isActive
-    ? (STATUS_COLOR[watch.lastStatus ?? ""] ?? "var(--muted-foreground)")
-    : "var(--muted-foreground)";
 
   return (
     <Card
@@ -68,27 +56,28 @@ export function WatchCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border/70 px-4 py-3 text-xs text-muted-foreground sm:px-5">
-          <Badge variant={statusVariant} title={watch.lastMessage ?? undefined}>
-            <span
-              className="status-dot"
-              style={{ backgroundColor: dotColor, color: dotColor }}
-              aria-hidden="true"
-            />
-            {statusText}
-          </Badge>
+          <StatusBadge
+            status={watch.lastStatus}
+            active={isActive}
+            title={watch.lastMessage ?? undefined}
+          />
           <span className="font-medium text-foreground">
-            {watch.lastCheckAt ? `vérifié ${relativeTime(watch.lastCheckAt)}` : "jamais vérifié"}
+            {watch.lastCheckAt
+              ? `${t.card.checked} ${relativeTime(watch.lastCheckAt)}`
+              : t.card.neverChecked}
           </span>
           <span aria-hidden="true" className="text-border">
             ·
           </span>
-          <span>toutes les {watch.intervalMin} min</span>
+          <span>{t.card.everyInterval(watch.intervalMin)}</span>
           {isActive && watch.nextCheckAt && (
             <>
               <span aria-hidden="true" className="text-border">
                 ·
               </span>
-              <span>prochain {untilTime(watch.nextCheckAt)}</span>
+              <span>
+                {t.card.next} {untilTime(watch.nextCheckAt)}
+              </span>
             </>
           )}
         </div>
@@ -99,28 +88,28 @@ export function WatchCard({
             variant="outline"
             onClick={() => onCheck(watch)}
             disabled={checking || !isActive}
-            title={isActive ? "Lancer une vérification immédiate" : "Surveillance en pause"}
+            title={isActive ? t.card.checkNowTitle : t.card.pausedTitle}
           >
             {checking ? <span className="btn-spinner" aria-hidden="true" /> : <RefreshCw />}
-            Vérifier
+            {t.card.checkNow}
           </Button>
 
           <Button
             size="sm"
             variant="ghost"
             onClick={() => onToggle(watch)}
-            title={isActive ? "Mettre en pause" : "Reprendre la surveillance"}
+            title={isActive ? t.card.pauseTitle : t.card.resumeTitle}
           >
             {isActive ? <Pause /> : <Play />}
-            {isActive ? "Pause" : "Reprendre"}
+            {isActive ? t.card.pause : t.card.resume}
           </Button>
 
           <div className="ml-auto flex items-center gap-1">
             <Link
               href={`/watches/${watch.id}`}
               className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              aria-label="Ouvrir la configuration"
-              title="Ouvrir la configuration"
+              aria-label={t.card.openSettings}
+              title={t.card.openSettings}
             >
               <Settings2 className="h-4 w-4" />
             </Link>
@@ -129,12 +118,12 @@ export function WatchCard({
               size="sm"
               variant={confirming ? "destructive" : "ghost"}
               onClick={() => (confirming ? onDelete(watch) : setConfirming(true))}
-              title={confirming ? "Cliquer à nouveau pour supprimer" : "Supprimer"}
-              aria-label="Supprimer la surveillance"
+              title={confirming ? t.card.deleteConfirmTitle : t.card.deleteTitle}
+              aria-label={t.card.deleteLabel}
               className="text-destructive hover:bg-destructive-soft hover:text-destructive"
             >
               <Trash2 />
-              <span className={confirming ? "" : "hidden"}>Confirmer</span>
+              <span className={confirming ? "" : "hidden"}>{t.card.confirm}</span>
             </Button>
           </div>
         </div>

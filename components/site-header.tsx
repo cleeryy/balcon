@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { strings as t } from "@/lib/strings";
 
 function GithubMark({ className }: { className?: string }) {
   return (
@@ -28,7 +29,7 @@ export function SiteHeader() {
           <Logo className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105" />
           <span className="font-display text-lg font-bold leading-none tracking-tight">balcon</span>
           <span className="hidden border-l border-border pl-2.5 text-xs text-muted-foreground sm:inline">
-            surveillance de pages web
+            {t.header.tagline}
           </span>
         </Link>
 
@@ -39,15 +40,15 @@ export function SiteHeader() {
               className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground sm:inline-flex"
             >
               <LayoutGrid className="h-4 w-4" />
-              Tableau de bord
+              {t.header.dashboard}
             </Link>
           )}
           <a
             href="https://github.com/cleeryy/balcon"
             target="_blank"
             rel="noreferrer"
-            aria-label="Dépôt GitHub"
-            title="Dépôt GitHub"
+            aria-label={t.header.githubRepo}
+            title={t.header.githubRepo}
             className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           >
             <GithubMark className="h-4 w-4" />

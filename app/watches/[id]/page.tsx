@@ -6,36 +6,35 @@ import {
   ArrowLeft,
   Clock3,
   History,
-  Pause,
-  Play,
+  Images,
+  Radar,
   RefreshCw,
   Save,
   Settings2,
   Timer,
-  Images,
-  Radar,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/empty-state";
 import { SiteFavicon } from "@/components/site-favicon";
 import { DiffView } from "@/components/diff-view";
-import {
-  STATUS_COLOR,
-  STATUS_LABEL,
-  absoluteTime,
-  logMessage,
-  relativeTime,
-  statusLabel,
-  statusVariant,
-  untilTime,
-} from "@/components/status";
+import { StatusBadge } from "@/components/status-badge";
+import { absoluteTime, logMessage, relativeTime, untilTime } from "@/components/status";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
+import { Switch } from "@/components/motion/switch";
+import { strings as t } from "@/lib/strings";
 import type { CheckLog, Snapshot, SnapshotRef, WatchDetail } from "@/components/types";
 
 export const dynamic = "force-dynamic";
@@ -81,7 +80,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         setNotFound(true);
         return;
       }
-      if (!res.ok) throw new Error("chargement impossible");
+      if (!res.ok) throw new Error(t.toast.loadImpossible);
 
       const w: WatchDetail = await res.json();
       setWatch(w);
@@ -100,13 +99,13 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
       setAfterId((current) => current ?? s[0]?.id ?? null);
       setBeforeId((current) => current ?? s[1]?.id ?? null);
     } catch {
-      toast.error("Chargement impossible", { description: "La page n'a pas pu être récupérée." });
+      toast.error(t.toast.loadImpossible, { description: t.toast.loadFailedDesc });
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  // Chargement initial : délégué à une promesse, pour éviter tout setState synchrone dans l'effet.
+  // Initial load: delegated to a promise, so no setState runs inside the effect.
   useEffect(() => {
     void (async () => {
       await load();
@@ -126,13 +125,13 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
       });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.error ?? "vérifiez les champs saisis");
+        throw new Error(body?.error ?? t.toast.checkFields);
       }
-      toast.success("Configuration enregistrée");
+      toast.success(t.toast.saved);
       await load();
     } catch (err) {
-      toast.error("Enregistrement impossible", {
-        description: err instanceof Error ? err.message : "Erreur inconnue.",
+      toast.error(t.toast.saveFailed, {
+        description: err instanceof Error ? err.message : t.toast.unknownError,
       });
     } finally {
       setSaving(false);
@@ -145,13 +144,15 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
       const res = await fetch(`/api/watches/${id}/check`, { method: "POST" });
       const result = await res.json().catch(() => null);
       if (result?.status === "ERROR") {
-        toast.error("Vérification en échec", { description: result.message ?? "Erreur inconnue." });
+        toast.error(t.toast.checkFailed, {
+          description: result.message ?? t.toast.unknownError,
+        });
       } else if (result?.status === "CHANGED") {
-        toast.warning("Changement détecté", { description: "Voir le diff plus bas." });
+        toast.warning(t.toast.changed, { description: t.toast.changedDesc });
       }
       await load();
     } catch {
-      toast.error("Vérification impossible", { description: "Réessayez dans un instant." });
+      toast.error(t.toast.checkImpossible, { description: t.toast.retryLater });
     } finally {
       setChecking(false);
     }
@@ -166,10 +167,10 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         body: JSON.stringify({ active: !watch.active }),
       });
       if (!res.ok) throw new Error();
-      toast.success(watch.active ? "Surveillance en pause" : "Surveillance reprise");
+      toast.success(watch.active ? t.toast.paused : t.toast.resumed);
       await load();
     } catch {
-      toast.error("Action impossible", { description: "Réessayez dans un instant." });
+      toast.error(t.toast.actionFailed, { description: t.toast.retryLater });
     }
   }
 
@@ -216,22 +217,16 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
     return (
       <EmptyState
         icon={Radar}
-        title="Surveillance introuvable"
-        description="Cette page n'existe plus ou a été supprimée. Retournez au tableau de bord pour retrouver vos autres surveillances."
+        title={t.detail.notFound.title}
+        description={t.detail.notFound.description}
       >
         <Button variant="outline" onClick={() => window.history.back()}>
           <ArrowLeft />
-          Revenir en arrière
+          {t.detail.notFound.goBack}
         </Button>
       </EmptyState>
     );
   }
-
-  const statusText = watch.active ? statusLabel(lastLog?.status) : "en pause";
-  const badgeVariant = statusVariant(lastLog?.status, watch.active);
-  const dotColor = watch.active
-    ? (STATUS_COLOR[lastLog?.status ?? ""] ?? "var(--muted-foreground)")
-    : "var(--muted-foreground)";
 
   const snapshotOptions = snapshots.map((s) => ({
     id: s.id,
@@ -246,7 +241,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
           className="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Toutes les surveillances
+          {t.detail.backToWatches}
         </Link>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -254,15 +249,8 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
             <SiteFavicon url={watch.url} className="h-12 w-12 rounded-xl" />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant={badgeVariant}>
-                  <span
-                    className="status-dot"
-                    style={{ backgroundColor: dotColor, color: dotColor }}
-                    aria-hidden="true"
-                  />
-                  {statusText}
-                </Badge>
-                {!watch.active && <Badge variant="outline">reprise manuelle</Badge>}
+                <StatusBadge status={lastLog?.status} active={watch.active} />
+                {!watch.active && <Badge variant="outline">{t.detail.manualResume}</Badge>}
               </div>
               <h1 className="font-display mt-2 text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
                 {watch.title || watch.url.replace(/^https?:\/\//, "")}
@@ -271,14 +259,20 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-wrap gap-2 sm:shrink">
-            <Button variant="outline" className="flex-1 sm:flex-none" onClick={toggleActive}>
-              {watch.active ? <Pause /> : <Play />}
-              {watch.active ? "Mettre en pause" : "Reprendre"}
-            </Button>
-            <Button className="flex-1 sm:flex-none" onClick={checkNow} disabled={checking || !watch.active}>
+          <div className="flex shrink-0 flex-wrap items-center gap-3 sm:shrink">
+            <Switch
+              checked={watch.active}
+              onCheckedChange={() => void toggleActive()}
+              label={watch.active ? t.detail.watching : t.detail.paused}
+              ariaLabel={watch.active ? t.card.pauseTitle : t.card.resumeTitle}
+            />
+            <Button
+              className="flex-1 sm:flex-none"
+              onClick={checkNow}
+              disabled={checking || !watch.active}
+            >
               {checking ? <span className="btn-spinner" aria-hidden="true" /> : <RefreshCw />}
-              Vérifier maintenant
+              {t.detail.checkNow}
             </Button>
           </div>
         </div>
@@ -288,304 +282,310 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
             <div>
               <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                 <Clock3 className="h-3.5 w-3.5" />
-                Dernier check
+                {t.detail.summary.lastCheck}
               </dt>
               <dd className="font-display mt-1.5 text-sm font-semibold sm:text-base">
-                {lastLog ? relativeTime(lastLog.createdAt) : "jamais"}
+                {lastLog ? relativeTime(lastLog.createdAt) : t.detail.summary.never}
               </dd>
               <dd className="mt-0.5 text-xs text-muted-foreground">
-                {lastLog ? absoluteTime(lastLog.createdAt) : "aucune vérification"}
+                {lastLog ? absoluteTime(lastLog.createdAt) : t.detail.summary.noChecks}
               </dd>
             </div>
             <div>
               <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                 <Timer className="h-3.5 w-3.5" />
-                Prochain check
+                {t.detail.summary.nextCheck}
               </dt>
               <dd className="font-display mt-1.5 text-sm font-semibold sm:text-base">
                 {watch.active ? untilTime(watch.nextCheckAt) : "—"}
               </dd>
               <dd className="mt-0.5 text-xs text-muted-foreground">
-                toutes les {watch.intervalMin} min
+                {t.detail.summary.everyInterval(watch.intervalMin)}
               </dd>
             </div>
             <div>
               <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                 <History className="h-3.5 w-3.5" />
-                Vérifications
+                {t.detail.summary.checks}
               </dt>
               <dd className="font-display mt-1.5 text-sm font-semibold sm:text-base">
-                {logs.length} récentes
+                {t.detail.summary.recentCount(logs.length)}
               </dd>
-              <dd className="mt-0.5 text-xs text-muted-foreground">20 dernières conservées</dd>
+              <dd className="mt-0.5 text-xs text-muted-foreground">
+                {t.detail.summary.keepCount}
+              </dd>
             </div>
             <div>
               <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                 <Images className="h-3.5 w-3.5" />
-                Snapshots
+                {t.detail.summary.snapshots}
               </dt>
               <dd className="font-display mt-1.5 text-sm font-semibold sm:text-base">
-                {snapshots.length} enregistrés
+                {t.detail.summary.storedCount(snapshots.length)}
               </dd>
               <dd className="mt-0.5 text-xs text-muted-foreground">
-                {snaps.length ? "contenu consultable" : "au premier changement"}
+                {snaps.length ? t.detail.summary.contentReady : t.detail.summary.onFirstChange}
               </dd>
             </div>
           </CardContent>
         </Card>
       </section>
 
-      <Card className="animate-rise" style={{ animationDelay: "60ms" }}>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Settings2 className="h-4 w-4 text-primary" />
-            <CardTitle>Configuration</CardTitle>
-          </div>
-          <CardDescription>
-            Les modifications s’appliquent à la prochaine vérification.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="title">Titre</Label>
-              <Input
-                id="title"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Ex : Tarifs abonnement"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="url">Adresse de la page</Label>
-              <Input
-                id="url"
-                value={form.url}
-                onChange={(e) => setForm({ ...form, url: e.target.value })}
-                placeholder="https://example.com/tarifs"
-                className="font-mono text-sm"
-                spellCheck={false}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="selector">Sélecteur CSS</Label>
-              <Input
-                id="selector"
-                value={form.selector}
-                onChange={(e) => setForm({ ...form, selector: e.target.value })}
-                placeholder="main .prix"
-                className="font-mono text-sm"
-                spellCheck={false}
-              />
-              <p className="text-xs text-muted-foreground">
-                Limite la surveillance à une zone précise de la page.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="interval">Intervalle (minutes)</Label>
-              <Input
-                id="interval"
-                type="number"
-                min={1}
-                value={form.intervalMin}
-                onChange={(e) => setForm({ ...form, intervalMin: Number(e.target.value) })}
-              />
-              <p className="text-xs text-muted-foreground">
-                1 min minimum, 30 min par défaut.
-              </p>
-            </div>
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="ignore">Expression à ignorer</Label>
-              <Input
-                id="ignore"
-                value={form.ignoreRegex}
-                onChange={(e) => setForm({ ...form, ignoreRegex: e.target.value })}
-                placeholder="\\d+ €|horaire de dernière mise à jour"
-                className="font-mono text-sm"
-                spellCheck={false}
-              />
-              <p className="text-xs text-muted-foreground">
-                Regex JavaScript exclue de la comparaison — utile pour les dates et compteurs.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email de notification</Label>
-              <Input
-                id="email"
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="vous@exemple.fr"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="webhook">Webhook</Label>
-              <Input
-                id="webhook"
-                value={form.webhookUrl}
-                onChange={(e) => setForm({ ...form, webhookUrl: e.target.value })}
-                placeholder="https://hooks.exemple.fr/..."
-                className="font-mono text-sm"
-                spellCheck={false}
-              />
-            </div>
-            <div className="flex items-center gap-3 sm:col-span-2">
-              <Button type="submit" disabled={saving}>
-                {saving ? <span className="btn-spinner" aria-hidden="true" /> : <Save />}
-                Enregistrer
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                Dernière modification {relativeTime(watch.updatedAt ?? null)}
-              </span>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="configuration" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="configuration">{t.detail.tabs.configuration}</TabsTrigger>
+          <TabsTrigger value="checks">{t.detail.tabs.checks}</TabsTrigger>
+          <TabsTrigger value="snapshots">{t.detail.tabs.snapshots}</TabsTrigger>
+        </TabsList>
 
-      <Card className="animate-rise" style={{ animationDelay: "120ms" }}>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <History className="h-4 w-4 text-primary" />
-            <CardTitle>Historique des vérifications</CardTitle>
-          </div>
-          <CardDescription>Les 20 dernières vérifications enregistrées.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {logs.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-              Aucune vérification pour l’instant. Lancez-en une depuis le haut de la page.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border">
-              {logs.map((l) => (
-                <li key={l.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
-                  <Badge variant={statusVariant(l.status)}>
-                    {STATUS_LABEL[l.status] ?? l.status.toLowerCase()}
-                  </Badge>
-                  <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
-                    {logMessage(l.message)}
-                  </span>
-                  <span className="shrink-0 text-xs text-muted-foreground">
-                    {l.durationMs} ms
-                  </span>
-                  <time
-                    className="shrink-0 font-mono text-xs text-muted-foreground"
-                    dateTime={l.createdAt}
-                    title={absoluteTime(l.createdAt)}
-                  >
-                    {relativeTime(l.createdAt)}
-                  </time>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
-
-      <section className="animate-rise space-y-4" style={{ animationDelay: "160ms" }}>
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Images className="h-4 w-4 text-primary" />
-              <CardTitle>Historique des snapshots</CardTitle>
-            </div>
-            <CardDescription>
-              État de la page enregistré à chaque changement, conservé pour comparaison.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {snapshots.length === 0 ? (
-              <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                Pas encore de snapshot : le premier est créé dès qu’un changement est détecté.
-              </p>
-            ) : (
-              <ul className="flex flex-wrap gap-2">
-                {snapshots.map((s) => (
-                  <li key={s.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setBeforeId(s.id);
-                        setAfterId(snapshots[0]?.id ?? s.id);
-                        document.getElementById("diff")?.scrollIntoView({
-                          behavior: "smooth",
-                          block: "start",
-                        });
-                      }}
-                      className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-foreground"
-                      title="Comparer ce snapshot au plus récent"
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-                      {s.hash.slice(0, 8)}
-                      <span className="text-muted-foreground/70">
-                        {relativeTime(s.createdAt)}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-
-        <div id="diff" className="scroll-mt-24">
-          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="font-display text-lg font-semibold tracking-tight">
-                Comparaison visuelle
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Version précédente à gauche, version actuelle à droite.
-              </p>
-            </div>
-            {snapshots.length >= 2 && (
-              <div className="flex flex-wrap gap-2">
-                <div className="w-[15rem] space-y-1">
-                  <Label htmlFor="before">Avant</Label>
-                  <Select
-                    id="before"
-                    value={beforeId ?? ""}
-                    onChange={(e) => setBeforeId(e.target.value)}
-                  >
-                    {snapshotOptions.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-                <div className="w-[15rem] space-y-1">
-                  <Label htmlFor="after">Après</Label>
-                  <Select
-                    id="after"
-                    value={afterId ?? ""}
-                    onChange={(e) => setAfterId(e.target.value)}
-                  >
-                    {snapshotOptions.map((o) => (
-                      <option key={o.id} value={o.id}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
+        <TabsContent value="configuration">
+          <Card className="animate-rise" style={{ animationDelay: "60ms" }}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Settings2 className="h-4 w-4 text-primary" />
+                <CardTitle>{t.detail.config.title}</CardTitle>
               </div>
-            )}
-          </div>
+              <CardDescription>{t.detail.config.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="title">{t.detail.config.titleField}</Label>
+                  <Input
+                    id="title"
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    placeholder={t.detail.config.titlePlaceholder}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="url">{t.detail.config.urlField}</Label>
+                  <Input
+                    id="url"
+                    value={form.url}
+                    onChange={(e) => setForm({ ...form, url: e.target.value })}
+                    placeholder={t.detail.config.urlPlaceholder}
+                    className="font-mono text-sm"
+                    spellCheck={false}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="selector">{t.detail.config.selectorField}</Label>
+                  <Input
+                    id="selector"
+                    value={form.selector}
+                    onChange={(e) => setForm({ ...form, selector: e.target.value })}
+                    placeholder={t.detail.config.selectorPlaceholder}
+                    className="font-mono text-sm"
+                    spellCheck={false}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t.detail.config.selectorHint}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="interval">{t.detail.config.intervalField}</Label>
+                  <Input
+                    id="interval"
+                    type="number"
+                    min={1}
+                    value={form.intervalMin}
+                    onChange={(e) => setForm({ ...form, intervalMin: Number(e.target.value) })}
+                  />
+                  <p className="text-xs text-muted-foreground">{t.detail.config.intervalHint}</p>
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="ignore">{t.detail.config.ignoreField}</Label>
+                  <Input
+                    id="ignore"
+                    value={form.ignoreRegex}
+                    onChange={(e) => setForm({ ...form, ignoreRegex: e.target.value })}
+                    placeholder={t.detail.config.ignorePlaceholder}
+                    className="font-mono text-sm"
+                    spellCheck={false}
+                  />
+                  <p className="text-xs text-muted-foreground">{t.detail.config.ignoreHint}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">{t.detail.config.emailField}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    placeholder={t.detail.config.emailPlaceholder}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="webhook">{t.detail.config.webhookField}</Label>
+                  <Input
+                    id="webhook"
+                    value={form.webhookUrl}
+                    onChange={(e) => setForm({ ...form, webhookUrl: e.target.value })}
+                    placeholder={t.detail.config.webhookPlaceholder}
+                    className="font-mono text-sm"
+                    spellCheck={false}
+                  />
+                </div>
+                <div className="flex items-center gap-3 sm:col-span-2">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? <span className="btn-spinner" aria-hidden="true" /> : <Save />}
+                    {t.detail.config.save}
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    {t.detail.config.updatedLast} {relativeTime(watch.updatedAt ?? null)}
+                  </span>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {snapshots.length >= 2 && before && after ? (
-            <DiffView before={before.content} after={after.content} />
-          ) : (
-            <div className="rounded-xl border border-dashed border-border bg-card/60 px-4 py-10 text-center">
-              <p className="font-display text-sm font-semibold">
-                Pas encore assez de snapshots pour comparer
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Deux états enregistrés sont nécessaires pour afficher un diff.
-              </p>
+        <TabsContent value="checks">
+          <Card className="animate-rise" style={{ animationDelay: "120ms" }}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <History className="h-4 w-4 text-primary" />
+                <CardTitle>{t.detail.checks.title}</CardTitle>
+              </div>
+              <CardDescription>{t.detail.checks.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {logs.length === 0 ? (
+                <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+                  {t.detail.checks.empty}
+                </p>
+              ) : (
+                <ul className="divide-y divide-border">
+                  {logs.map((l) => (
+                    <li key={l.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
+                      <StatusBadge status={l.status} />
+                      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
+                        {logMessage(l.message)}
+                      </span>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {l.durationMs} ms
+                      </span>
+                      <time
+                        className="shrink-0 font-mono text-xs text-muted-foreground"
+                        dateTime={l.createdAt}
+                        title={absoluteTime(l.createdAt)}
+                      >
+                        {relativeTime(l.createdAt)}
+                      </time>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="snapshots">
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Images className="h-4 w-4 text-primary" />
+                  <CardTitle>{t.detail.snapshots.title}</CardTitle>
+                </div>
+                <CardDescription>{t.detail.snapshots.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {snapshots.length === 0 ? (
+                  <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+                    {t.detail.snapshots.empty}
+                  </p>
+                ) : (
+                  <ul className="flex flex-wrap gap-2">
+                    {snapshots.map((s) => (
+                      <li key={s.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setBeforeId(s.id);
+                            setAfterId(snapshots[0]?.id ?? s.id);
+                            document.getElementById("diff")?.scrollIntoView({
+                              behavior: "smooth",
+                              block: "start",
+                            });
+                          }}
+                          className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 font-mono text-xs text-muted-foreground transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-foreground"
+                          title={t.detail.snapshots.compareHint}
+                        >
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+                          {s.hash.slice(0, 8)}
+                          <span className="text-muted-foreground/70">
+                            {relativeTime(s.createdAt)}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+
+            <div id="diff" className="scroll-mt-24">
+              <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="font-display text-lg font-semibold tracking-tight">
+                    {t.detail.diff.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">{t.detail.diff.description}</p>
+                </div>
+                {snapshots.length >= 2 && (
+                  <div className="flex flex-wrap gap-2">
+                    <div className="w-[15rem] space-y-1">
+                      <Label htmlFor="before">{t.detail.diff.before}</Label>
+                      <Select value={beforeId ?? ""} onValueChange={setBeforeId}>
+                        <SelectTrigger id="before" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {snapshotOptions.map((o) => (
+                            <SelectItem key={o.id} value={o.id}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="w-[15rem] space-y-1">
+                      <Label htmlFor="after">{t.detail.diff.after}</Label>
+                      <Select value={afterId ?? ""} onValueChange={setAfterId}>
+                        <SelectTrigger id="after" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {snapshotOptions.map((o) => (
+                            <SelectItem key={o.id} value={o.id}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {snapshots.length >= 2 && before && after ? (
+                <DiffView before={before.content} after={after.content} />
+              ) : (
+                <div className="rounded-xl border border-dashed border-border bg-card/60 px-4 py-10 text-center">
+                  <p className="font-display text-sm font-semibold">
+                    {t.detail.diff.notEnoughTitle}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {t.detail.diff.notEnoughBody}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
