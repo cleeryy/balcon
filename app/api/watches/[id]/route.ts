@@ -8,6 +8,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
     include: {
       snapshots: { orderBy: { createdAt: "desc" }, take: 20, select: { id: true, hash: true, createdAt: true } },
       checkLogs: { orderBy: { createdAt: "desc" }, take: 20 },
+      valuePoints: { orderBy: { createdAt: "desc" }, take: 20 },
     },
   });
   if (!watch) return NextResponse.json({ error: "not found" }, { status: 404 });
