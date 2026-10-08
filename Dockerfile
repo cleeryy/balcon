@@ -32,6 +32,6 @@ COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --chmod=755 docker-entrypoint.sh ./docker-entrypoint.sh
 USER nextjs
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=20s CMD-SHELL node -e "fetch('http://localhost:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=20s CMD node -e "fetch('http://localhost:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["node", "server.js"]
