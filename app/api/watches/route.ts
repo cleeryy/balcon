@@ -23,8 +23,13 @@ export async function POST(req: Request) {
       selector: body.selector ?? null,
       ignoreRegex: body.ignoreRegex ?? null,
       intervalMin: Number(body.intervalMin) > 0 ? Number(body.intervalMin) : 30,
+      tags: typeof body.tags === "string" ? body.tags : "",
+      valueRegex: body.valueRegex ?? null,
       webhookUrl: body.webhookUrl ?? null,
       email: body.email ?? null,
+      discordWebhookUrl: body.discordWebhookUrl ?? null,
+      slackWebhookUrl: body.slackWebhookUrl ?? null,
+      checkWindows: body.checkWindows ?? null,
     },
   });
   return NextResponse.json(watch, { status: 201 });

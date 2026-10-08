@@ -17,9 +17,18 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const body = await req.json();
-  const allowed = ["url", "title", "selector", "ignoreRegex", "intervalMin", "active", "webhookUrl", "email"] as const;
+  const allowed = ["url", "title", "selector", "ignoreRegex", "intervalMin", "active", "webhookUrl", "email", "tags", "valueRegex", "discordWebhookUrl", "slackWebhookUrl", "checkWindows", "pausedUntil"] as const;
   const data: Record<string, unknown> = {};
   for (const k of allowed) if (k in body) data[k] = body[k] === "" ? null : body[k];
+  if (data.tags === null) data.tags = ""; // tags: chaîne vide plutôt que null
+  if (data.checkWindows !== undefined && data.checkWindows !== null && typeof data.checkWindows === "object") {
+    data.checkWindows = JSON.stringify(data.checkWindows);
+  }
+  if (data.pausedUntil !== undefined && data.pausedUntil !== null) {
+    const d = new Date(data.pausedUntil as string);
+    if (Number.isNaN(d.getTime())) return NextResponse.json({ error: "invalid pausedUntil" }, { status: 400 });
+    data.pausedUntil = d;
+  }
   if (data.intervalMin !== undefined) {
     const n = Number(data.intervalMin);
     if (!Number.isFinite(n) || n < 1) return NextResponse.json({ error: "intervalMin >= 1" }, { status: 400 });

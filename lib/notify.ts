@@ -6,6 +6,8 @@ interface WatchNotify {
   title?: string | null;
   webhookUrl?: string | null;
   email?: string | null;
+  discordWebhookUrl?: string | null;
+  slackWebhookUrl?: string | null;
 }
 
 function mailer() {
@@ -57,6 +59,38 @@ export async function notifyChange(watch: WatchNotify, diffPreview: string): Pro
     } else {
       console.warn("[notify] SMTP_HOST manquant, email ignoré pour", watch.id);
     }
+  }
+
+  if (watch.discordWebhookUrl) {
+    jobs.push(
+      fetch(watch.discordWebhookUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          content: `🔔 **balcon** — changement détecté : **${title}**\n${watch.url}`,
+          embeds: [
+            {
+              title: title.slice(0, 256),
+              url: watch.url,
+              description: diffPreview.slice(0, 4000) || "contenu modifié",
+              color: 0xf59e0b,
+            },
+          ],
+        }),
+      }).catch((e) => console.error("[notify] discord failed", e))
+    );
+  }
+
+  if (watch.slackWebhookUrl) {
+    jobs.push(
+      fetch(watch.slackWebhookUrl, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          text: `🔔 balcon: changement détecté — ${title}\n${watch.url}\n${diffPreview.slice(0, 3000)}`,
+        }),
+      }).catch((e) => console.error("[notify] slack failed", e))
+    );
   }
 
   await Promise.allSettled(jobs);

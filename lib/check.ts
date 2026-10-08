@@ -3,8 +3,10 @@ import { createHash } from "node:crypto";
 import { gzipSync, gunzipSync } from "node:zlib";
 import { diffLines } from "diff";
 import { prisma } from "@/lib/prisma";
-import { fetchPage } from "@/lib/fetcher";
+import { fetchPage, type FetchResult } from "@/lib/fetcher";
 import { notifyChange } from "@/lib/notify";
+
+export type ErrorKind = "dns" | "timeout" | "http" | "bot" | "parse" | "unknown";
 
 export function extractContent(html: string, selector?: string | null, ignoreRegex?: string | null): string {
   const $ = cheerio.load(html);
@@ -32,6 +34,16 @@ export function extractContent(html: string, selector?: string | null, ignoreReg
   return lines.join("\n");
 }
 
+/** Nombre d'éléments matchés par le sélecteur, null si pas de sélecteur. */
+export function countSelectorMatches(html: string, selector?: string | null): number | null {
+  if (!selector) return null;
+  try {
+    return cheerio.load(html)(selector).length;
+  } catch {
+    return 0;
+  }
+}
+
 export function hashContent(content: string): string {
   return createHash("sha256").update(content, "utf8").digest("hex");
 }
@@ -53,6 +65,31 @@ export interface CheckOutcome {
   durationMs: number;
 }
 
+export function classifyError(fetched: FetchResult): ErrorKind {
+  const msg = fetched.error ?? "";
+  if (/timeout|abort/i.test(msg)) return "timeout";
+  if (/ENOTFOUND|EAI_AGAIN|EAI_NONAME|getaddrinfo|dns/i.test(msg)) return "dns";
+  if (fetched.cfChallenge) return "bot";
+  if (fetched.status > 0) return "http";
+  return "unknown";
+}
+
+/** Applique valueRegex sur le texte, crée un ValuePoint (regex invalide → ignoré). */
+async function extractValuePoint(watchId: string, valueRegex: string | null, text: string): Promise<void> {
+  if (!valueRegex) return;
+  try {
+    const m = new RegExp(valueRegex).exec(text);
+    const captured = m?.[1] ?? m?.[0];
+    if (captured === undefined) return;
+    const num = parseFloat(captured.replace(",", "."));
+    await prisma.valuePoint.create({
+      data: { watchId, label: "value", value: captured, numeric: Number.isFinite(num) ? num : null },
+    });
+  } catch {
+    // regex invalide -> ignore silencieusement
+  }
+}
+
 export async function checkWatch(watchId: string): Promise<CheckOutcome> {
   const started = Date.now();
   const watch = await prisma.watch.findUnique({ where: { id: watchId } });
@@ -61,7 +98,11 @@ export async function checkWatch(watchId: string): Promise<CheckOutcome> {
     return { status: "SKIPPED", message: "watch paused", durationMs: Date.now() - started };
   }
 
+  const fetchStart = Date.now();
   const fetched = await fetchPage(watch.url);
+  const fetchMs = Date.now() - fetchStart;
+  const htmlBytes = Buffer.byteLength(fetched.html, "utf8");
+
   if (!fetched.ok) {
     const durationMs = Date.now() - started;
     // Message affichable tel quel dans l'UI : erreur backend + statut HTTP (schéma inchangé).
@@ -69,14 +110,62 @@ export async function checkWatch(watchId: string): Promise<CheckOutcome> {
     const message =
       fetched.status > 0 && !/HTTP \d{3}/.test(base) ? `${base} (HTTP ${fetched.status})` : base;
     await prisma.checkLog.create({
-      data: { watchId, status: "ERROR", message, durationMs },
+      data: {
+        watchId,
+        status: "ERROR",
+        message,
+        durationMs,
+        httpStatus: fetched.status > 0 ? fetched.status : null,
+        backend: fetched.via,
+        fetchMs,
+        parseMs: 0,
+        htmlBytes,
+        textBytes: null,
+        selectorMatches: null,
+        errorKind: classifyError(fetched),
+        contentHash: null,
+      },
     });
     await prisma.watch.update({ where: { id: watchId }, data: { nextCheckAt: nextCheckDate(watch.intervalMin) } });
     return { status: "ERROR", message, durationMs };
   }
 
+  const parseStart = Date.now();
   const content = extractContent(fetched.html, watch.selector, watch.ignoreRegex);
+  const selectorMatches = countSelectorMatches(fetched.html, watch.selector);
+  const parseMs = Date.now() - parseStart;
+  const textBytes = Buffer.byteLength(content, "utf8");
   const hash = hashContent(content);
+
+  // valueRegex -> ValuePoint (n'echec jamais le check)
+  await extractValuePoint(watchId, watch.valueRegex, content).catch((e) =>
+    console.error("[check] valuePoint failed", e)
+  );
+
+  // errorKind "parse" si extraction vide ou regex invalide (statut OK/CHANGED conservé)
+  let parseIssue: ErrorKind | null = null;
+  if (content.length === 0) {
+    parseIssue = "parse";
+  } else if (watch.ignoreRegex) {
+    try {
+      new RegExp(watch.ignoreRegex);
+    } catch {
+      parseIssue = "parse";
+    }
+  }
+
+  const diag = {
+    httpStatus: fetched.status > 0 ? fetched.status : null,
+    backend: fetched.via,
+    fetchMs,
+    parseMs,
+    htmlBytes,
+    textBytes,
+    selectorMatches,
+    errorKind: parseIssue,
+    contentHash: hash,
+  };
+
   const latest = await prisma.snapshot.findFirst({
     where: { watchId },
     orderBy: { createdAt: "desc" },
@@ -90,7 +179,7 @@ export async function checkWatch(watchId: string): Promise<CheckOutcome> {
       data: { watchId, hash, content: gzipSync(content) },
     });
     let message = latest ? `content changed ${latest.hash.slice(0, 8)} -> ${hash.slice(0, 8)}` : "initial snapshot";
-    await prisma.checkLog.create({ data: { watchId, status: "CHANGED", message, durationMs } });
+    await prisma.checkLog.create({ data: { watchId, status: "CHANGED", message, durationMs, ...diag } });
     await prisma.watch.update({ where: { id: watchId }, data: { nextCheckAt } });
     if (latest) {
       const prev = gunzipToString(latest.content);
@@ -104,7 +193,7 @@ export async function checkWatch(watchId: string): Promise<CheckOutcome> {
     return { status: "CHANGED", message, durationMs };
   }
 
-  await prisma.checkLog.create({ data: { watchId, status: "OK", message: "no change", durationMs } });
+  await prisma.checkLog.create({ data: { watchId, status: "OK", message: "no change", durationMs, ...diag } });
   await prisma.watch.update({ where: { id: watchId }, data: { nextCheckAt } });
   return { status: "OK", message: "no change", durationMs };
 }

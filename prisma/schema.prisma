@@ -8,20 +8,27 @@ datasource db {
 }
 
 model Watch {
-  id          String    @id @default(cuid())
-  url         String
-  title       String?
-  selector    String?
-  ignoreRegex String?
-  intervalMin Int       @default(30)
-  active      Boolean   @default(true)
-  webhookUrl  String?
-  email       String?
+  id                String    @id @default(cuid())
+  url               String
+  title             String?
+  selector          String?
+  ignoreRegex       String?
+  intervalMin       Int       @default(30)
+  active            Boolean   @default(true)
+  webhookUrl        String?
+  email             String?
+  tags              String    @default("")
+  valueRegex        String?
+  discordWebhookUrl String?
+  slackWebhookUrl   String?
+  checkWindows      String?
+  pausedUntil       DateTime?
   nextCheckAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   snapshots   Snapshot[]
   checkLogs   CheckLog[]
+  valuePoints ValuePoint[]
 }
 
 model Snapshot {
@@ -36,13 +43,34 @@ model Snapshot {
 }
 
 model CheckLog {
-  id         String   @id @default(cuid())
-  watchId    String
-  watch      Watch    @relation(fields: [watchId], references: [id], onDelete: Cascade)
-  status     String
-  message    String?
-  durationMs Int      @default(0)
-  createdAt  DateTime @default(now())
+  id              String   @id @default(cuid())
+  watchId         String
+  watch           Watch    @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  status          String
+  message         String?
+  durationMs      Int      @default(0)
+  httpStatus      Int?
+  backend         String?
+  fetchMs         Int?
+  parseMs         Int?
+  htmlBytes       Int?
+  textBytes       Int?
+  selectorMatches Int?
+  errorKind       String?
+  contentHash     String?
+  createdAt       DateTime @default(now())
+
+  @@index([watchId, createdAt])
+}
+
+model ValuePoint {
+  id        String   @id @default(cuid())
+  watchId   String
+  watch     Watch    @relation(fields: [watchId], references: [id], onDelete: Cascade)
+  label     String   @default("value")
+  value     String
+  numeric   Float?
+  createdAt DateTime @default(now())
 
   @@index([watchId, createdAt])
 }
