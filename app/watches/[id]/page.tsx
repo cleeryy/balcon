@@ -31,7 +31,8 @@ import { EmptyState } from "@/components/empty-state";
 import { SiteFavicon } from "@/components/site-favicon";
 import { DiffView } from "@/components/diff-view";
 import { StatusBadge } from "@/components/status-badge";
-import { absoluteTime, logMessage, relativeTime, untilTime } from "@/components/status";
+import { CheckHistory } from "@/components/check-history";
+import { absoluteTime, relativeTime, untilTime } from "@/components/status";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { Switch } from "@/components/motion/switch";
 import { strings as t } from "@/lib/strings";
@@ -68,6 +69,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
   const [checking, setChecking] = useState(false);
   const [beforeId, setBeforeId] = useState<string | null>(null);
   const [afterId, setAfterId] = useState<string | null>(null);
+  const [tab, setTab] = useState("configuration");
 
   const load = useCallback(async () => {
     try {
@@ -176,6 +178,16 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
 
   const before = useMemo(() => snaps.find((s) => s.id === beforeId), [snaps, beforeId]);
   const after = useMemo(() => snaps.find((s) => s.id === afterId), [snaps, afterId]);
+
+  /** Jump to the diff tab with the pair picked from a check row. */
+  function showDiff(pair: { before: SnapshotRef; after: SnapshotRef }) {
+    setBeforeId(pair.before.id);
+    setAfterId(pair.after.id);
+    setTab("snapshots");
+    window.setTimeout(() => {
+      document.getElementById("diff")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+  }
 
   const logs: CheckLog[] = watch?.checkLogs ?? [];
   const lastLog = logs[0];
@@ -331,7 +343,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         </Card>
       </section>
 
-      <Tabs defaultValue="configuration" className="space-y-4">
+      <Tabs value={tab} onValueChange={setTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="configuration">{t.detail.tabs.configuration}</TabsTrigger>
           <TabsTrigger value="checks">{t.detail.tabs.checks}</TabsTrigger>
@@ -451,32 +463,7 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
               <CardDescription>{t.detail.checks.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              {logs.length === 0 ? (
-                <p className="rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                  {t.detail.checks.empty}
-                </p>
-              ) : (
-                <ul className="divide-y divide-border">
-                  {logs.map((l) => (
-                    <li key={l.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2.5">
-                      <StatusBadge status={l.status} />
-                      <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
-                        {logMessage(l.message)}
-                      </span>
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {l.durationMs} ms
-                      </span>
-                      <time
-                        className="shrink-0 font-mono text-xs text-muted-foreground"
-                        dateTime={l.createdAt}
-                        title={absoluteTime(l.createdAt)}
-                      >
-                        {relativeTime(l.createdAt)}
-                      </time>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <CheckHistory logs={logs} snapshots={snapshots} onShowDiff={showDiff} />
             </CardContent>
           </Card>
         </TabsContent>
