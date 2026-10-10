@@ -6,5 +6,8 @@ set -e
 echo "[entrypoint] prisma migrate deploy..."
 npx prisma migrate deploy
 
+echo "[entrypoint] bootstrap admin (idempotent)..."
+npm run bootstrap:admin
+
 echo "[entrypoint] migrations OK, démarrage du serveur."
 exec "$@"

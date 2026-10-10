@@ -55,19 +55,38 @@ Alternative Dokploy : déployer via **Docker Compose** en collant le contenu de 
 
 | Route | Méthode | Description |
 |---|---|---|
-| `/api/health` | GET | healthcheck |
-| `/api/watches` | GET/POST | liste / création |
-| `/api/watches/[id]` | GET/PATCH/DELETE | détail / màj / suppression |
-| `/api/watches/[id]/check` | POST | vérification manuelle |
-| `/api/watches/[id]/snapshots` | GET | 20 derniers snapshots décompressés |
-| `/api/cron` | GET/POST | déclenche les checks dus |
+| `/api/health` | GET | healthcheck (public) |
+| `/api/auth/*` | * | Better Auth (public) |
+| `/api/watches` | GET/POST | liste / création (session, scopé owner) |
+| `/api/watches/[id]` | GET/PATCH/DELETE | détail / màj / suppression (session, 404 hors périmètre) |
+| `/api/watches/[id]/check` | POST | vérification manuelle (session, owner) |
+| `/api/watches/[id]/snapshots` | GET | 20 derniers snapshots décompressés (session, owner) |
+| `/api/watches/import` | POST | import V2 (session, dédup par owner) |
+| `/api/watches/export` | GET | export V2 (session, scopé owner) |
+| `/api/cron` | GET/POST | checks dus — `Authorization: Bearer CRON_SECRET` ou session admin |
+| `/api/admin/settings` | GET/PATCH | `siteName`/`defaultIntervalMin` + statut OIDC lecture seule (admin) |
+| `/api/admin/stats` | GET | compteurs users/watches/checks (admin) |
 
 Chaîne de fetch : `fetcher curl_cffi (10s)` → `FlareSolverr optionnel si CF (15s)` → erreur propre. Pas de Playwright en V1.
 
-## Auth (phase 1)
+## Auth (phases 1–2)
 
 Better Auth + plugin `admin`, adaptateur Prisma (SQLite). Instance **fermée** : inscription désactivée partout (`disableSignUp: true` sur email/password et OIDC) — les comptes sont créés par un admin.
 
 - Routes : `/api/auth/[...all]` (catch-all Better Auth).
 - OIDC : provider statique `oidc` enregistré **uniquement** si `OIDC_ISSUER`, `OIDC_CLIENT_ID` et `OIDC_CLIENT_SECRET` sont toutes définies (découverte via `{OIDC_ISSUER}/.well-known/openid-configuration`, PKCE + vérification ID token). Pattern de callback à déclarer côté IdP : `{baseURL}/api/auth/callback/oidc`.
 - Requiert `BETTER_AUTH_SECRET` + `BETTER_AUTH_URL`. Tokens OAuth chiffrés au repos (`encryptOAuthTokens`).
+
+## Bootstrap admin (phase 2)
+
+Au démarrage Docker (entrypoint, après `prisma migrate deploy`, `set -e` — échec visible) :
+
+```bash
+npm run bootstrap:admin   # scripts/bootstrap-admin.ts (tsx)
+```
+
+- 0 utilisateur → crée l'admin depuis `ADMIN_EMAIL` + `ADMIN_PASSWORD` (`ADMIN_NAME` optionnel) via le stockage Better Auth (hash scrypt, hooks). Échec fermé et explicite si manquants (jamais de skip silencieux, jamais de secret loggé).
+- ≥1 utilisateur → ne fait rien (idempotent, jamais de reset).
+- Puis rattache les `Watch` orphelines (`ownerId IS NULL`) au premier admin.
+
+Toutes les routes `/api/watches*` exigent une session et scopent par `ownerId` (`where:{id, ownerId}`, 404 hors périmètre, dédup URL par owner, pas d'`ownerId` accepté du client). `/api/cron` exige `Bearer CRON_SECRET` ou session admin ; le scheduler in-process appelle `runDueChecks()` directement (inchangé). `/api/health` et `/api/auth/*` restent publics. `proxy.ts` redirige les pages `/`, `/watches/*`, `/admin/*` sans cookie de session vers `/login` (UX seule, sécurité dans les routes).

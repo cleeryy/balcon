@@ -1,16 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 
 function cleanStr(v: unknown): string | null {
   return typeof v === "string" && v.trim() !== "" ? v : null;
 }
 
 export async function POST(req: Request) {
+  const authz = await requireUser(req);
+  if ("response" in authz) return authz.response;
+  const ownerId = authz.user.id;
   const body = await req.json();
   if (!Array.isArray(body)) {
     return NextResponse.json({ error: "expected a JSON array of watches" }, { status: 400 });
   }
-  const existing = new Set((await prisma.watch.findMany({ select: { url: true } })).map((w) => w.url));
+  // Dédup scopée par propriétaire.
+  const existing = new Set(
+    (await prisma.watch.findMany({ where: { ownerId }, select: { url: true } })).map((w) => w.url)
+  );
   let created = 0;
   let skipped = 0;
   for (const item of body) {
@@ -39,6 +46,7 @@ export async function POST(req: Request) {
         discordWebhookUrl: cleanStr(item.discordWebhookUrl),
         slackWebhookUrl: cleanStr(item.slackWebhookUrl),
         checkWindows: cleanStr(item.checkWindows),
+        ownerId,
       },
     });
     existing.add(url);

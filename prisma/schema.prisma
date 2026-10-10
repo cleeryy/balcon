@@ -23,12 +23,16 @@ model Watch {
   slackWebhookUrl   String?
   checkWindows      String?
   pausedUntil       DateTime?
+  ownerId           String?
+  owner             User?     @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   nextCheckAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   snapshots   Snapshot[]
   checkLogs   CheckLog[]
   valuePoints ValuePoint[]
+
+  @@index([ownerId])
 }
 
 model Snapshot {
@@ -92,6 +96,7 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
+  watches       Watch[]
 
   @@unique([email])
   @@map("user")
@@ -144,4 +149,11 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+// Paramètres applicatifs modifiables via /api/admin/settings.
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }

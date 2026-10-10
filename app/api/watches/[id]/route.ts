@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 
-export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const authz = await requireUser(req);
+  if ("response" in authz) return authz.response;
   const { id } = await ctx.params;
-  const watch = await prisma.watch.findUnique({
-    where: { id },
+  const watch = await prisma.watch.findFirst({
+    where: { id, ownerId: authz.user.id },
     include: {
       snapshots: { orderBy: { createdAt: "desc" }, take: 20, select: { id: true, hash: true, createdAt: true } },
       checkLogs: { orderBy: { createdAt: "desc" }, take: 20 },
@@ -16,6 +19,8 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 }
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const authz = await requireUser(req);
+  if ("response" in authz) return authz.response;
   const { id } = await ctx.params;
   const body = await req.json();
   const allowed = ["url", "title", "selector", "ignoreRegex", "intervalMin", "active", "webhookUrl", "email", "tags", "valueRegex", "discordWebhookUrl", "slackWebhookUrl", "checkWindows", "pausedUntil"] as const;
@@ -35,13 +40,25 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
     if (!Number.isFinite(n) || n < 1) return NextResponse.json({ error: "intervalMin >= 1" }, { status: 400 });
     data.intervalMin = Math.floor(n);
   }
-  const watch = await prisma.watch.update({ where: { id }, data }).catch(() => null);
-  if (!watch) return NextResponse.json({ error: "not found" }, { status: 404 });
+  // Scoping strict : update + 404 si hors périmètre (jamais d'ownerId accepté du client).
+  const existing = await prisma.watch.findFirst({ where: { id, ownerId: authz.user.id }, select: { id: true } });
+  if (!existing) return NextResponse.json({ error: "not found" }, { status: 404 });
+  if (typeof data.url === "string") {
+    const dup = await prisma.watch.findFirst({
+      where: { url: data.url, ownerId: authz.user.id, NOT: { id } },
+      select: { id: true },
+    });
+    if (dup) return NextResponse.json({ error: "watch already exists" }, { status: 409 });
+  }
+  const watch = await prisma.watch.update({ where: { id }, data });
   return NextResponse.json(watch);
 }
 
-export async function DELETE(_req: Request, ctx: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const authz = await requireUser(req);
+  if ("response" in authz) return authz.response;
   const { id } = await ctx.params;
-  await prisma.watch.delete({ where: { id } }).catch(() => null);
+  const result = await prisma.watch.deleteMany({ where: { id, ownerId: authz.user.id } });
+  if (result.count === 0) return NextResponse.json({ error: "not found" }, { status: 404 });
   return NextResponse.json({ ok: true });
 }

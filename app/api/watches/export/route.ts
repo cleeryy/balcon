@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 
 // Format d'export/import V2 (contrat UI) : subset stable des champs Watch.
 export const EXPORT_FIELDS = [
@@ -17,8 +18,11 @@ export const EXPORT_FIELDS = [
   "checkWindows",
 ] as const;
 
-export async function GET() {
+export async function GET(req: Request) {
+  const authz = await requireUser(req);
+  if ("response" in authz) return authz.response;
   const watches = await prisma.watch.findMany({
+    where: { ownerId: authz.user.id },
     orderBy: { createdAt: "desc" },
     select: {
       url: true,
