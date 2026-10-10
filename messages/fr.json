@@ -13,7 +13,11 @@
     "switchToLight": "Passer en thème clair",
     "switchToDark": "Passer en thème sombre",
     "themeLight": "Thème clair",
-    "themeDark": "Thème sombre"
+    "themeDark": "Thème sombre",
+    "admin": "Admin",
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signOutLabel": "Fermer cette session"
   },
 
   "common": {
@@ -269,6 +273,98 @@
     "hiddenLines": {
       "one": "{0} ligne supplémentaire masquée pour garder la réactivité.",
       "other": "{0} lignes supplémentaires masquées pour garder la réactivité."
+    }
+  },
+
+  "auth": {
+    "eyebrow": "Connexion",
+    "heading": "Bon retour",
+    "intro": "Connectez-vous avec votre compte pour atteindre le tableau de bord. Les nouveaux comptes sont créés par un administrateur.",
+    "emailField": "E-mail",
+    "emailPlaceholder": "vous@exemple.fr",
+    "passwordField": "Mot de passe",
+    "passwordPlaceholder": "Votre mot de passe",
+    "submit": "Se connecter",
+    "sso": "Continuer avec SSO",
+    "ssoHint": "Votre organisation vous connecte via son fournisseur d'identité.",
+    "signedIn": "Connecté",
+    "signedInDesc": "Bon retour.",
+    "failed": "Connexion impossible",
+    "failedDesc": "Vérifiez votre e-mail et votre mot de passe, puis réessayez."
+  },
+
+  "admin": {
+    "eyebrow": "Administration",
+    "heading": "Console",
+    "intro": "Les personnes, les réglages de l'instance et une vue d'ensemble de cette instance balcon.",
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "users": "Utilisateurs",
+      "settings": "Réglages"
+    },
+    "deniedTitle": "Page introuvable",
+    "deniedBody": "Cette page n'existe pas ou vous n'y avez pas accès.",
+    "goBack": "Retour au tableau de bord",
+    "overview": {
+      "users": "Utilisateurs",
+      "usersHint": "comptes enregistrés",
+      "watches": "Veilles",
+      "watchesHint": "pages suivies",
+      "checks": "Vérifications",
+      "checksHint": "exécutions enregistrées",
+      "loadFailed": "Impossible de charger la vue d'ensemble"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "description": "Tout le monde peut se connecter. Les rôles s'appliquent à la prochaine connexion.",
+      "createTitle": "Créer un utilisateur",
+      "nameField": "Nom",
+      "namePlaceholder": "Ada Lovelace",
+      "emailField": "E-mail",
+      "emailPlaceholder": "ada@exemple.fr",
+      "passwordField": "Mot de passe",
+      "passwordPlaceholder": "Un mot de passe robuste",
+      "roleField": "Rôle",
+      "roleAdmin": "Admin",
+      "roleUser": "Utilisateur",
+      "create": "Créer l'utilisateur",
+      "banned": "Banni",
+      "sessions": "Sessions",
+      "ban": "Bannir",
+      "unban": "Débannir",
+      "delete": "Supprimer",
+      "deleteConfirmTitle": "Cliquez à nouveau pour supprimer",
+      "makeAdmin": "Passer admin",
+      "makeUser": "Passer utilisateur",
+      "empty": "Aucun utilisateur pour l'instant.",
+      "created": "Utilisateur créé",
+      "createFailed": "Impossible de créer l'utilisateur",
+      "roleUpdated": "Rôle mis à jour",
+      "roleFailed": "Impossible de changer le rôle",
+      "bannedToast": "Utilisateur banni",
+      "unbannedToast": "Utilisateur débanni",
+      "banFailed": "Impossible de changer le bannissement",
+      "deleted": "Utilisateur supprimé",
+      "deleteFailed": "Impossible de supprimer l'utilisateur",
+      "loadFailed": "Impossible de charger les utilisateurs"
+    },
+    "settings": {
+      "title": "Réglages de l'instance",
+      "description": "Le nom affiché dans l'interface et l'intervalle de vérification par défaut des nouvelles veilles.",
+      "siteNameField": "Nom du site",
+      "siteNamePlaceholder": "balcon",
+      "intervalField": "Intervalle par défaut (minutes)",
+      "intervalHint": "1 minute minimum.",
+      "save": "Enregistrer",
+      "saved": "Réglages enregistrés",
+      "saveFailed": "Impossible d'enregistrer les réglages",
+      "loadFailed": "Impossible de charger les réglages",
+      "oidcTitle": "Connexion unique (OIDC)",
+      "oidcConfigured": "Configuré",
+      "oidcNotConfigured": "Non configuré",
+      "oidcIssuer": "Émetteur",
+      "oidcCallback": "URL de rappel",
+      "oidcHint": "Lecture seule — les identifiants vivent dans l'environnement du serveur, jamais ici."
     }
   },
 

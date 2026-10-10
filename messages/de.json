@@ -13,7 +13,11 @@
     "switchToLight": "Zum hellen Design wechseln",
     "switchToDark": "Zum dunklen Design wechseln",
     "themeLight": "Helles Design",
-    "themeDark": "Dunkles Design"
+    "themeDark": "Dunkles Design",
+    "admin": "Admin",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "signOutLabel": "Diese Sitzung beenden"
   },
 
   "common": {
@@ -269,6 +273,98 @@
     "hiddenLines": {
       "one": "{0} weitere Zeile ausgeblendet, damit es flüssig bleibt.",
       "other": "{0} weitere Zeilen ausgeblendet, damit es flüssig bleibt."
+    }
+  },
+
+  "auth": {
+    "eyebrow": "Anmelden",
+    "heading": "Willkommen zurück",
+    "intro": "Melde dich mit deinem Konto an, um zum Dashboard zu gelangen. Neue Konten werden von einer Administration angelegt.",
+    "emailField": "E-Mail",
+    "emailPlaceholder": "du@beispiel.de",
+    "passwordField": "Passwort",
+    "passwordPlaceholder": "Dein Passwort",
+    "submit": "Anmelden",
+    "sso": "Mit SSO fortfahren",
+    "ssoHint": "Deine Organisation meldet dich über ihren Identitätsanbieter an.",
+    "signedIn": "Angemeldet",
+    "signedInDesc": "Willkommen zurück.",
+    "failed": "Anmeldung fehlgeschlagen",
+    "failedDesc": "Prüfe E-Mail und Passwort und versuche es erneut."
+  },
+
+  "admin": {
+    "eyebrow": "Verwaltung",
+    "heading": "Konsole",
+    "intro": "Personen, Instanzeinstellungen und eine Übersicht dieser balcon-Instanz.",
+    "tabs": {
+      "overview": "Übersicht",
+      "users": "Benutzer",
+      "settings": "Einstellungen"
+    },
+    "deniedTitle": "Seite nicht gefunden",
+    "deniedBody": "Diese Seite existiert nicht oder du hast keinen Zugriff darauf.",
+    "goBack": "Zurück zum Dashboard",
+    "overview": {
+      "users": "Benutzer",
+      "usersHint": "registrierte Konten",
+      "watches": "Beobachtungen",
+      "watchesHint": "verfolgte Seiten",
+      "checks": "Prüfungen",
+      "checksHint": "gespeicherte Läufe",
+      "loadFailed": "Übersicht konnte nicht geladen werden"
+    },
+    "users": {
+      "title": "Benutzer",
+      "description": "Alle, die sich anmelden können. Rollen gelten ab der nächsten Anmeldung.",
+      "createTitle": "Benutzer anlegen",
+      "nameField": "Name",
+      "namePlaceholder": "Ada Lovelace",
+      "emailField": "E-Mail",
+      "emailPlaceholder": "ada@beispiel.de",
+      "passwordField": "Passwort",
+      "passwordPlaceholder": "Ein starkes Passwort",
+      "roleField": "Rolle",
+      "roleAdmin": "Admin",
+      "roleUser": "Benutzer",
+      "create": "Benutzer anlegen",
+      "banned": "Gesperrt",
+      "sessions": "Sitzungen",
+      "ban": "Sperren",
+      "unban": "Entsperren",
+      "delete": "Löschen",
+      "deleteConfirmTitle": "Erneut klicken zum Löschen",
+      "makeAdmin": "Zum Admin machen",
+      "makeUser": "Zum Benutzer machen",
+      "empty": "Noch keine Benutzer.",
+      "created": "Benutzer angelegt",
+      "createFailed": "Benutzer konnte nicht angelegt werden",
+      "roleUpdated": "Rolle aktualisiert",
+      "roleFailed": "Rolle konnte nicht geändert werden",
+      "bannedToast": "Benutzer gesperrt",
+      "unbannedToast": "Benutzer entsperrt",
+      "banFailed": "Sperre konnte nicht geändert werden",
+      "deleted": "Benutzer gelöscht",
+      "deleteFailed": "Benutzer konnte nicht gelöscht werden",
+      "loadFailed": "Benutzer konnten nicht geladen werden"
+    },
+    "settings": {
+      "title": "Instanzeinstellungen",
+      "description": "Der in der Oberfläche gezeigte Name und das Standardprüfintervall neuer Beobachtungen.",
+      "siteNameField": "Seitenname",
+      "siteNamePlaceholder": "balcon",
+      "intervalField": "Standardintervall (Minuten)",
+      "intervalHint": "Mindestens 1 Minute.",
+      "save": "Speichern",
+      "saved": "Einstellungen gespeichert",
+      "saveFailed": "Einstellungen konnten nicht gespeichert werden",
+      "loadFailed": "Einstellungen konnten nicht geladen werden",
+      "oidcTitle": "Single Sign-on (OIDC)",
+      "oidcConfigured": "Eingerichtet",
+      "oidcNotConfigured": "Nicht eingerichtet",
+      "oidcIssuer": "Herausgeber",
+      "oidcCallback": "Rückruf-URL",
+      "oidcHint": "Nur lesen — Zugangsdaten liegen in der Serverumgebung, niemals hier."
     }
   },
 

@@ -13,7 +13,11 @@
     "switchToLight": "切换到浅色主题",
     "switchToDark": "切换到深色主题",
     "themeLight": "浅色主题",
-    "themeDark": "深色主题"
+    "themeDark": "深色主题",
+    "admin": "管理",
+    "signIn": "登录",
+    "signOut": "退出",
+    "signOutLabel": "退出此会话"
   },
 
   "common": {
@@ -267,6 +271,98 @@
     "before": "之前",
     "after": "之后",
     "hiddenLines": "已隐藏另外 {0} 行以保持流畅。"
+  },
+
+  "auth": {
+    "eyebrow": "登录",
+    "heading": "欢迎回来",
+    "intro": "使用您的帐户登录以进入仪表板。新帐户由管理员创建。",
+    "emailField": "邮箱",
+    "emailPlaceholder": "you@example.com",
+    "passwordField": "密码",
+    "passwordPlaceholder": "您的密码",
+    "submit": "登录",
+    "sso": "使用 SSO 继续",
+    "ssoHint": "您的组织通过其身份提供商为您登录。",
+    "signedIn": "已登录",
+    "signedInDesc": "欢迎回来。",
+    "failed": "登录失败",
+    "failedDesc": "请检查邮箱和密码，然后重试。"
+  },
+
+  "admin": {
+    "eyebrow": "管理",
+    "heading": "控制台",
+    "intro": "人员、实例设置以及此 balcon 实例的概览。",
+    "tabs": {
+      "overview": "概览",
+      "users": "用户",
+      "settings": "设置"
+    },
+    "deniedTitle": "页面未找到",
+    "deniedBody": "此页面不存在，或您无权访问。",
+    "goBack": "返回仪表板",
+    "overview": {
+      "users": "用户",
+      "usersHint": "已注册帐户",
+      "watches": "监控",
+      "watchesHint": "跟踪的页面",
+      "checks": "检查",
+      "checksHint": "已记录的运行",
+      "loadFailed": "无法加载概览"
+    },
+    "users": {
+      "title": "用户",
+      "description": "所有可以登录的人。角色在下次登录时生效。",
+      "createTitle": "创建用户",
+      "nameField": "姓名",
+      "namePlaceholder": "Ada Lovelace",
+      "emailField": "邮箱",
+      "emailPlaceholder": "ada@example.com",
+      "passwordField": "密码",
+      "passwordPlaceholder": "一个强密码",
+      "roleField": "角色",
+      "roleAdmin": "管理员",
+      "roleUser": "用户",
+      "create": "创建用户",
+      "banned": "已封禁",
+      "sessions": "会话",
+      "ban": "封禁",
+      "unban": "解封",
+      "delete": "删除",
+      "deleteConfirmTitle": "再次点击以删除",
+      "makeAdmin": "设为管理员",
+      "makeUser": "设为用户",
+      "empty": "暂无用户。",
+      "created": "用户已创建",
+      "createFailed": "无法创建用户",
+      "roleUpdated": "角色已更新",
+      "roleFailed": "无法更改角色",
+      "bannedToast": "用户已封禁",
+      "unbannedToast": "用户已解封",
+      "banFailed": "无法更改封禁状态",
+      "deleted": "用户已删除",
+      "deleteFailed": "无法删除用户",
+      "loadFailed": "无法加载用户"
+    },
+    "settings": {
+      "title": "实例设置",
+      "description": "界面中显示的名称以及新监控的默认检查间隔。",
+      "siteNameField": "站点名称",
+      "siteNamePlaceholder": "balcon",
+      "intervalField": "默认间隔（分钟）",
+      "intervalHint": "最少 1 分钟。",
+      "save": "保存",
+      "saved": "设置已保存",
+      "saveFailed": "无法保存设置",
+      "loadFailed": "无法加载设置",
+      "oidcTitle": "单点登录（OIDC）",
+      "oidcConfigured": "已配置",
+      "oidcNotConfigured": "未配置",
+      "oidcIssuer": "颁发者",
+      "oidcCallback": "回调 URL",
+      "oidcHint": "只读——凭据保存在服务器环境中，从不在此处。"
+    }
   },
 
   "toast": {
