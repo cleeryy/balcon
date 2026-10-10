@@ -63,3 +63,11 @@ Alternative Dokploy : déployer via **Docker Compose** en collant le contenu de 
 | `/api/cron` | GET/POST | déclenche les checks dus |
 
 Chaîne de fetch : `fetcher curl_cffi (10s)` → `FlareSolverr optionnel si CF (15s)` → erreur propre. Pas de Playwright en V1.
+
+## Auth (phase 1)
+
+Better Auth + plugin `admin`, adaptateur Prisma (SQLite). Instance **fermée** : inscription désactivée partout (`disableSignUp: true` sur email/password et OIDC) — les comptes sont créés par un admin.
+
+- Routes : `/api/auth/[...all]` (catch-all Better Auth).
+- OIDC : provider statique `oidc` enregistré **uniquement** si `OIDC_ISSUER`, `OIDC_CLIENT_ID` et `OIDC_CLIENT_SECRET` sont toutes définies (découverte via `{OIDC_ISSUER}/.well-known/openid-configuration`, PKCE + vérification ID token). Pattern de callback à déclarer côté IdP : `{baseURL}/api/auth/callback/oidc`.
+- Requiert `BETTER_AUTH_SECRET` + `BETTER_AUTH_URL`. Tokens OAuth chiffrés au repos (`encryptOAuthTokens`).
