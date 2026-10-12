@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, Loader2 } from "lucide-react";
+import { KeyRound } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { StatefulButton } from "@/components/motion/button/stateful";
+import { Magnetic } from "@/components/motion/magnetic";
+import { Input } from "@/components/motion/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/logo";
 import { useDict } from "@/components/locale-provider";
 import { signIn } from "@/lib/auth-client";
@@ -119,34 +119,39 @@ export function LoginForm() {
       <Card className="animate-rise" style={{ animationDelay: "80ms" }}>
         <CardContent className="space-y-4 p-4 sm:p-5">
           <form onSubmit={(e) => void submit(e)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login-email">{t.auth.emailField}</Label>
-              <Input
-                id="login-email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.auth.emailPlaceholder}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="login-password">{t.auth.passwordField}</Label>
-              <Input
-                id="login-password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t.auth.passwordPlaceholder}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? <Loader2 className="animate-spin" /> : <KeyRound />}
-              {t.auth.submit}
-            </Button>
+            <Input
+              id="login-email"
+              label={t.auth.emailField}
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={setEmail}
+              placeholder={t.auth.emailPlaceholder}
+              classNames={{ field: "!rounded-lg", input: "text-sm" }}
+            />
+            <Input
+              id="login-password"
+              label={t.auth.passwordField}
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={setPassword}
+              placeholder={t.auth.passwordPlaceholder}
+              classNames={{ field: "!rounded-lg", input: "text-sm" }}
+            />
+            <Magnetic strength={0.2} className="block">
+              <StatefulButton
+                type="submit"
+                state={busy ? "loading" : "idle"}
+                loadingText={t.auth.submit}
+                icon={<KeyRound className="h-4 w-4" />}
+                className="h-11 w-full rounded-md"
+              >
+                {t.auth.submit}
+              </StatefulButton>
+            </Magnetic>
           </form>
 
           {ssoEnabled && (
@@ -157,16 +162,16 @@ export function LoginForm() {
                 <span className="h-px flex-1 bg-border" aria-hidden="true" />
               </div>
               <div className="space-y-2">
-                <Button
+                <StatefulButton
                   type="button"
                   variant="outline"
-                  className="w-full"
-                  disabled={ssoBusy}
+                  state={ssoBusy ? "loading" : "idle"}
+                  loadingText={t.auth.sso}
+                  className="h-11 w-full rounded-md"
                   onClick={() => void continueWithSso()}
                 >
-                  {ssoBusy && <Loader2 className="animate-spin" />}
                   {t.auth.sso}
-                </Button>
+                </StatefulButton>
                 <p className="text-center text-xs text-muted-foreground">
                   {t.auth.ssoHint}
                 </p>

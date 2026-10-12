@@ -1,8 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { toast } from "sonner";
+import { Magnetic } from "@/components/motion/magnetic";
+import { StatefulButton } from "@/components/motion/button/stateful";
+import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,9 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/motion/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDict } from "@/components/locale-provider";
 
@@ -108,35 +109,42 @@ export function AdminSettings() {
             </div>
           ) : (
             <form onSubmit={(e) => void save(e)} className="max-w-lg space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="admin-site-name">{t.admin.settings.siteNameField}</Label>
-                <Input
-                  id="admin-site-name"
-                  value={siteName}
-                  onChange={(e) => setSiteName(e.target.value)}
-                  placeholder={t.admin.settings.siteNamePlaceholder}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="admin-interval">{t.admin.settings.intervalField}</Label>
+              <Input
+                id="admin-site-name"
+                label={t.admin.settings.siteNameField}
+                value={siteName}
+                onChange={setSiteName}
+                placeholder={t.admin.settings.siteNamePlaceholder}
+                required
+                classNames={{ field: "!rounded-lg", input: "text-sm" }}
+              />
+              <div className="space-y-1">
                 <Input
                   id="admin-interval"
+                  label={t.admin.settings.intervalField}
                   type="number"
                   min={1}
                   step={1}
                   value={interval}
-                  onChange={(e) => setInterval(e.target.value)}
+                  onChange={setInterval}
                   required
+                  classNames={{ field: "!rounded-lg", input: "text-sm" }}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="px-1 text-xs text-muted-foreground">
                   {t.admin.settings.intervalHint}
                 </p>
               </div>
-              <Button type="submit" disabled={saving}>
-                {saving ? <Loader2 className="animate-spin" /> : <Save />}
-                {t.admin.settings.save}
-              </Button>
+              <Magnetic strength={0.2} className="inline-block">
+                <StatefulButton
+                  type="submit"
+                  state={saving ? "loading" : "idle"}
+                  loadingText={t.admin.settings.save}
+                  icon={<Save className="h-4 w-4" />}
+                  className="rounded-md"
+                >
+                  {t.admin.settings.save}
+                </StatefulButton>
+              </Magnetic>
             </form>
           )}
         </CardContent>
@@ -156,9 +164,9 @@ export function AdminSettings() {
                 <dt className="text-muted-foreground">SSO</dt>
                 <dd>
                   {oidc.configured ? (
-                    <Badge variant="default">{t.admin.settings.oidcConfigured}</Badge>
+                    <AnimatedBadge status="success" size="sm">{t.admin.settings.oidcConfigured}</AnimatedBadge>
                   ) : (
-                    <Badge variant="outline">{t.admin.settings.oidcNotConfigured}</Badge>
+                    <AnimatedBadge status="neutral" size="sm">{t.admin.settings.oidcNotConfigured}</AnimatedBadge>
                   )}
                 </dd>
               </div>

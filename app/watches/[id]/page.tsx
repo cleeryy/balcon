@@ -15,17 +15,18 @@ import {
   Timer,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button as MButton } from "@/components/motion/button/base";
+import { Magnetic } from "@/components/motion/magnetic";
+import { StatefulButton } from "@/components/motion/button/stateful";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/motion/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/motion/select";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/empty-state";
@@ -297,10 +298,10 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
         title={t.detail.notFound.title}
         description={t.detail.notFound.description}
       >
-        <Button variant="outline" onClick={() => window.history.back()}>
-          <ArrowLeft />
+        <MButton variant="outline" size="sm" onClick={() => window.history.back()} className="rounded-md">
+          <ArrowLeft className="h-3.5 w-3.5" />
           {t.detail.notFound.goBack}
-        </Button>
+        </MButton>
       </EmptyState>
     );
   }
@@ -343,14 +344,18 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
               label={watch.active ? t.detail.watching : t.detail.paused}
               ariaLabel={watch.active ? t.card.pauseTitle : t.card.resumeTitle}
             />
-            <Button
-              className="flex-1 sm:flex-none"
-              onClick={checkNow}
-              disabled={checking || !watch.active}
-            >
-              {checking ? <span className="btn-spinner" aria-hidden="true" /> : <RefreshCw />}
-              {t.detail.checkNow}
-            </Button>
+            <Magnetic strength={0.25} className="flex-1 sm:flex-none">
+              <StatefulButton
+                state={checking ? "loading" : "idle"}
+                loadingText={t.detail.checkNow}
+                icon={<RefreshCw className="h-4 w-4" />}
+                onClick={checkNow}
+                disabled={!watch.active}
+                className="w-full rounded-md sm:w-auto"
+              >
+                {t.detail.checkNow}
+              </StatefulButton>
+            </Magnetic>
           </div>
         </div>
 
@@ -428,26 +433,23 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
             </CardHeader>
             <CardContent>
               <form onSubmit={save} className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="title">{t.detail.config.titleField}</Label>
-                  <Input
-                    id="title"
-                    value={form.title}
-                    onChange={(e) => setForm({ ...form, title: e.target.value })}
-                    placeholder={t.detail.config.titlePlaceholder}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="url">{t.detail.config.urlField}</Label>
-                  <Input
-                    id="url"
-                    value={form.url}
-                    onChange={(e) => setForm({ ...form, url: e.target.value })}
-                    placeholder={t.detail.config.urlPlaceholder}
-                    className="font-mono text-sm"
-                    spellCheck={false}
-                  />
-                </div>
+                <Input
+                  id="title"
+                  label={t.detail.config.titleField}
+                  value={form.title}
+                  onChange={(next) => setForm({ ...form, title: next })}
+                  placeholder={t.detail.config.titlePlaceholder}
+                  classNames={{ field: "!rounded-lg", input: "text-sm" }}
+                />
+                <Input
+                  id="url"
+                  label={t.detail.config.urlField}
+                  value={form.url}
+                  onChange={(next) => setForm({ ...form, url: next })}
+                  placeholder={t.detail.config.urlPlaceholder}
+                  spellCheck={false}
+                  classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
+                />
                 <div className="space-y-2">
                   <TagsField
                     id="tags"
@@ -462,64 +464,62 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                     onChange={(valueRegex) => setForm({ ...form, valueRegex })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="selector">{t.detail.config.selectorField}</Label>
+                <div className="space-y-1">
                   <Input
                     id="selector"
+                    label={t.detail.config.selectorField}
                     value={form.selector}
-                    onChange={(e) => setForm({ ...form, selector: e.target.value })}
+                    onChange={(next) => setForm({ ...form, selector: next })}
                     placeholder={t.detail.config.selectorPlaceholder}
-                    className="font-mono text-sm"
                     spellCheck={false}
+                    classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="px-1 text-xs text-muted-foreground">
                     {t.detail.config.selectorHint}
                   </p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="interval">{t.detail.config.intervalField}</Label>
+                <div className="space-y-1">
                   <Input
                     id="interval"
+                    label={t.detail.config.intervalField}
                     type="number"
                     min={1}
-                    value={form.intervalMin}
-                    onChange={(e) => setForm({ ...form, intervalMin: Number(e.target.value) })}
+                    value={String(form.intervalMin)}
+                    onChange={(next) => setForm({ ...form, intervalMin: Number(next) })}
+                    classNames={{ field: "!rounded-lg", input: "text-sm" }}
                   />
-                  <p className="text-xs text-muted-foreground">{t.detail.config.intervalHint}</p>
+                  <p className="px-1 text-xs text-muted-foreground">{t.detail.config.intervalHint}</p>
                 </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="ignore">{t.detail.config.ignoreField}</Label>
+                <div className="space-y-1 sm:col-span-2">
                   <Input
                     id="ignore"
+                    label={t.detail.config.ignoreField}
                     value={form.ignoreRegex}
-                    onChange={(e) => setForm({ ...form, ignoreRegex: e.target.value })}
+                    onChange={(next) => setForm({ ...form, ignoreRegex: next })}
                     placeholder={t.detail.config.ignorePlaceholder}
-                    className="font-mono text-sm"
                     spellCheck={false}
+                    classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
                   />
-                  <p className="text-xs text-muted-foreground">{t.detail.config.ignoreHint}</p>
+                  <p className="px-1 text-xs text-muted-foreground">{t.detail.config.ignoreHint}</p>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">{t.detail.config.emailField}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder={t.detail.config.emailPlaceholder}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="webhook">{t.detail.config.webhookField}</Label>
-                  <Input
-                    id="webhook"
-                    value={form.webhookUrl}
-                    onChange={(e) => setForm({ ...form, webhookUrl: e.target.value })}
-                    placeholder={t.detail.config.webhookPlaceholder}
-                    className="font-mono text-sm"
-                    spellCheck={false}
-                  />
-                </div>
+                <Input
+                  id="email"
+                  label={t.detail.config.emailField}
+                  type="email"
+                  value={form.email}
+                  onChange={(next) => setForm({ ...form, email: next })}
+                  placeholder={t.detail.config.emailPlaceholder}
+                  classNames={{ field: "!rounded-lg", input: "text-sm" }}
+                />
+                <Input
+                  id="webhook"
+                  label={t.detail.config.webhookField}
+                  value={form.webhookUrl}
+                  onChange={(next) => setForm({ ...form, webhookUrl: next })}
+                  placeholder={t.detail.config.webhookPlaceholder}
+                  spellCheck={false}
+                  classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
+                />
                 <div className="sm:col-span-2">
                   <NotificationsFields
                     idPrefix="detail"
@@ -537,14 +537,21 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                   />
                 </div>
                 <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
-                  <Button type="submit" disabled={saving}>
-                    {saving ? <span className="btn-spinner" aria-hidden="true" /> : <Save />}
-                    {t.detail.config.save}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={pauseUntilTomorrow}>
-                    <Moon />
+                  <Magnetic strength={0.2} className="inline-block">
+                    <StatefulButton
+                      type="submit"
+                      state={saving ? "loading" : "idle"}
+                      loadingText={t.detail.config.save}
+                      icon={<Save className="h-4 w-4" />}
+                      className="rounded-md"
+                    >
+                      {t.detail.config.save}
+                    </StatefulButton>
+                  </Magnetic>
+                  <MButton type="button" variant="outline" size="sm" onClick={pauseUntilTomorrow} className="rounded-md">
+                    <Moon className="h-3.5 w-3.5" />
                     {t.form.pauseUntilTomorrow}
-                  </Button>
+                  </MButton>
                   <span className="text-xs text-muted-foreground">
                     {t.detail.config.updatedLast} {relativeTime(watch.updatedAt ?? null)}
                   </span>
@@ -554,14 +561,15 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                     <span className="text-xs font-medium text-warning">
                       {t.form.pausedUntil(absoluteTime(watch.pausedUntil ?? null))}
                     </span>
-                    <Button
+                    <MButton
                       type="button"
                       variant="ghost"
                       size="sm"
                       onClick={() => void patchPausedUntil(null)}
+                      className="rounded-md"
                     >
                       {t.form.resumeNow}
-                    </Button>
+                    </MButton>
                   </div>
                 )}
               </form>
@@ -640,9 +648,9 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                 {snapshots.length >= 2 && (
                   <div className="flex flex-wrap gap-2">
                     <div className="w-[15rem] space-y-1">
-                      <Label htmlFor="before">{t.detail.diff.before}</Label>
+                      <span id="before-label" className="px-1 text-sm font-medium text-foreground">{t.detail.diff.before}</span>
                       <Select value={beforeId ?? ""} onValueChange={setBeforeId}>
-                        <SelectTrigger id="before" className="w-full">
+                        <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -655,9 +663,9 @@ export default function WatchDetail({ params }: { params: Promise<{ id: string }
                       </Select>
                     </div>
                     <div className="w-[15rem] space-y-1">
-                      <Label htmlFor="after">{t.detail.diff.after}</Label>
+                      <span id="after-label" className="px-1 text-sm font-medium text-foreground">{t.detail.diff.after}</span>
                       <Select value={afterId ?? ""} onValueChange={setAfterId}>
-                        <SelectTrigger id="after" className="w-full">
+                        <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

@@ -7,6 +7,8 @@ import { Logo } from "@/components/logo";
 import { SessionMenu } from "@/components/session-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Magnetic } from "@/components/motion/magnetic";
+import { Tooltip } from "@/components/motion/tooltip";
 import { useDict } from "@/components/locale-provider";
 
 function GithubMark({ className }: { className?: string }) {
@@ -29,7 +31,9 @@ export function SiteHeader() {
           href="/"
           className="group flex min-w-0 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <Logo className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105" />
+          <Magnetic strength={0.3}>
+            <Logo className="h-8 w-8 shrink-0 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105" />
+          </Magnetic>
           <span className="font-display text-lg font-bold leading-none tracking-tight">balcon</span>
           <span className="hidden border-l border-border pl-2.5 text-xs text-muted-foreground sm:inline">
             {t.header.tagline}
@@ -46,16 +50,18 @@ export function SiteHeader() {
               {t.header.dashboard}
             </Link>
           )}
-          <a
-            href="https://github.com/cleeryy/balcon"
-            target="_blank"
-            rel="noreferrer"
-            aria-label={t.header.githubRepo}
-            title={t.header.githubRepo}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            <GithubMark className="h-4 w-4" />
-          </a>
+          <Tooltip content={t.header.githubRepo} side="bottom">
+            <a
+              href="https://github.com/cleeryy/balcon"
+              target="_blank"
+              rel="noreferrer"
+              aria-label={t.header.githubRepo}
+              title={t.header.githubRepo}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            >
+              <GithubMark className="h-4 w-4" />
+            </a>
+          </Tooltip>
           <LocaleSwitcher />
           <ThemeToggle />
           <SessionMenu />

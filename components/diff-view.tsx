@@ -2,7 +2,8 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { diffLines } from "diff";
-import { Columns2, Minus, Plus, Rows3 } from "lucide-react";
+import { Columns2, Rows3 } from "lucide-react";
+import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { useDict } from "@/components/locale-provider";
 import { cn } from "@/lib/utils";
 
@@ -102,14 +103,12 @@ export function DiffView({ before, after }: { before: string; after: string }) {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="flex flex-wrap items-center gap-3 border-b border-border bg-card-highlight px-3 py-2.5">
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-success-soft px-2 py-1 text-xs font-semibold text-success">
-          <Plus className="h-3.5 w-3.5" />
+        <AnimatedBadge status="success" size="sm">
           {t.diff.added(counts.added)}
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-md bg-destructive-soft px-2 py-1 text-xs font-semibold text-destructive">
-          <Minus className="h-3.5 w-3.5" />
+        </AnimatedBadge>
+        <AnimatedBadge status="danger" size="sm">
           {t.diff.removed(counts.removed)}
-        </span>
+        </AnimatedBadge>
 
         <div className="ml-auto inline-flex rounded-lg border border-border bg-card p-0.5">
           <button

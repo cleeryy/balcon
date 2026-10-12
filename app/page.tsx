@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  AlertTriangle,
   BellRing,
-  ChevronDown,
   Download,
   Link2,
   Plus,
@@ -15,16 +13,19 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button as MButton } from "@/components/motion/button/base";
+import { Input as MInput } from "@/components/motion/input";
+import { Magnetic } from "@/components/motion/magnetic";
+import { StatefulButton } from "@/components/motion/button/stateful";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
+  CollapsibleIndicator,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Input } from "@/components/ui/input";
+} from "@/components/motion/collapsible";
+import { Alert, AlertAction, AlertContent, AlertDescription, AlertIcon, AlertTitle } from "@/components/motion/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { badgeVariants } from "@/components/ui/badge";
 import { Stats } from "@/components/stats";
 import { WatchCard } from "@/components/watch-card";
 import { EmptyState } from "@/components/empty-state";
@@ -36,7 +37,6 @@ import {
 } from "@/components/watch-fields";
 import { relativeTime } from "@/components/status";
 import { useDict } from "@/components/locale-provider";
-import { cn } from "@/lib/utils";
 import type { Watch, WatchSummary } from "@/components/types";
 
 function normalizeUrl(raw: string) {
@@ -374,17 +374,17 @@ export default function Home() {
             </span>
           )}
           {canExport && (
-            <Button variant="outline" size="sm" onClick={() => void exportWatches()}>
-              <Download />
+            <MButton variant="outline" size="sm" onClick={() => void exportWatches()} className="rounded-md">
+              <Download className="h-3.5 w-3.5" />
               {t.dashboard.io.export}
-            </Button>
+            </MButton>
           )}
           {canImport && (
             <>
-              <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
-                <Upload />
+              <MButton variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="rounded-md">
+                <Upload className="h-3.5 w-3.5" />
                 {t.dashboard.io.import}
-              </Button>
+              </MButton>
               <input
                 ref={fileRef}
                 type="file"
@@ -395,38 +395,45 @@ export default function Home() {
               />
             </>
           )}
-          <Button
+          <MButton
             variant="outline"
             size="sm"
             onClick={reload}
             disabled={loading}
             aria-label={t.dashboard.reloadLabel}
+            className="rounded-md"
           >
-            <RefreshCw className={loading ? "animate-spin" : undefined} />
+            <RefreshCw className={loading ? "h-3.5 w-3.5 animate-spin" : "h-3.5 w-3.5"} />
             {t.dashboard.reload}
-          </Button>
+          </MButton>
         </div>
       </section>
 
       <Card className="animate-rise" style={{ animationDelay: "60ms" }}>
         <CardContent className="space-y-4 p-4 sm:p-5">
           <form onSubmit={add} className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder={t.dashboard.form.placeholder}
-                aria-label={t.dashboard.form.inputLabel}
-                className="h-11 pl-9 font-mono text-sm"
-                autoComplete="off"
-                spellCheck={false}
-              />
-            </div>
-            <Button type="submit" disabled={adding} className="h-11 sm:w-auto">
-              {adding ? <span className="btn-spinner" aria-hidden="true" /> : <Plus />}
-              {t.dashboard.form.submit}
-            </Button>
+            <MInput
+              value={url}
+              onChange={setUrl}
+              placeholder={t.dashboard.form.placeholder}
+              aria-label={t.dashboard.form.inputLabel}
+              leftIcon={<Link2 />}
+              autoComplete="off"
+              spellCheck={false}
+              className="flex-1"
+              classNames={{ field: "!h-11 !rounded-lg", input: "font-mono text-sm" }}
+            />
+            <Magnetic strength={0.25} className="sm:w-auto">
+              <StatefulButton
+                type="submit"
+                state={adding ? "loading" : "idle"}
+                loadingText={t.dashboard.form.submit}
+                icon={<Plus className="h-4 w-4" />}
+                className="h-11 w-full rounded-md sm:w-auto"
+              >
+                {t.dashboard.form.submit}
+              </StatefulButton>
+            </Magnetic>
           </form>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -435,15 +442,12 @@ export default function Home() {
           </div>
 
           <Collapsible className="space-y-1">
-            <CollapsibleTrigger className="group inline-flex items-center gap-2 rounded-md text-sm font-semibold transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">
-              <ChevronDown
-                className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
-                aria-hidden="true"
-              />
+            <CollapsibleTrigger className="inline-flex items-center gap-2 rounded-md text-sm font-semibold transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">
+              <CollapsibleIndicator className="ml-0 [&_svg]:h-4 [&_svg]:w-4" />
               {t.form.options}
             </CollapsibleTrigger>
             <p className="text-xs text-muted-foreground">{t.form.optionsHint}</p>
-            <CollapsibleContent className="grid gap-4 pt-2 sm:grid-cols-2">
+            <CollapsibleContent className="grid gap-4 pt-2 sm:grid-cols-2" contentClassName="!overflow-visible">
               <div className="sm:col-span-2">
                 <NotificationsFields
                   idPrefix="new"
@@ -477,37 +481,34 @@ export default function Home() {
       />
 
       {error && !loading && (
-        <Card className="animate-fade border-destructive/40 bg-destructive-soft">
-          <CardContent className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-              <div>
-                <p className="font-display font-semibold">{t.dashboard.loadError}</p>
-                <p className="text-sm text-muted-foreground">{error}</p>
-              </div>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => void load()}>
-              <RefreshCw />
-              {t.dashboard.retry}
-            </Button>
-          </CardContent>
-        </Card>
+        <Alert variant="destructive" className="animate-fade rounded-xl border border-destructive/40 bg-destructive-soft">
+          <AlertIcon />
+          <AlertContent>
+            <AlertTitle className="font-display font-semibold">{t.dashboard.loadError}</AlertTitle>
+            <AlertDescription className="!text-muted-foreground">{error}</AlertDescription>
+            <AlertAction>
+              <MButton variant="outline" size="sm" onClick={() => void load()} className="rounded-md">
+                <RefreshCw className="h-3.5 w-3.5" />
+                {t.dashboard.retry}
+              </MButton>
+            </AlertAction>
+          </AlertContent>
+        </Alert>
       )}
 
       {!loading && !error && watches.length > 0 && (
         <div className="animate-rise space-y-3" style={{ animationDelay: "140ms" }}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t.dashboard.search.placeholder}
-                aria-label={t.dashboard.search.label}
-                className="h-10 pl-9"
-                autoComplete="off"
-              />
-            </div>
+            <MInput
+              value={query}
+              onChange={setQuery}
+              placeholder={t.dashboard.search.placeholder}
+              aria-label={t.dashboard.search.label}
+              leftIcon={<Search />}
+              autoComplete="off"
+              className="flex-1"
+              classNames={{ field: "!h-10 !rounded-lg", input: "text-sm" }}
+            />
             <p className="shrink-0 text-xs tabular-nums text-muted-foreground sm:text-right">
               {filtering
                 ? t.dashboard.search.results(filtered.length, watches.length)
@@ -523,30 +524,29 @@ export default function Home() {
               {visibleTags.map((tag) => {
                 const on = activeTags.includes(tag);
                 return (
-                  <button
+                  <MButton
                     key={tag}
                     type="button"
+                    size="sm"
+                    variant={on ? "primary" : "outline"}
                     aria-pressed={on}
                     onClick={() => toggleTag(tag)}
-                    className={cn(
-                      badgeVariants({ variant: on ? "default" : "outline" }),
-                      "cursor-pointer transition-colors hover:border-primary/50 hover:text-foreground"
-                    )}
+                    className="rounded-full !px-3 !text-xs font-semibold"
                   >
                     {tag}
-                  </button>
+                  </MButton>
                 );
               })}
               {filtering && (
-                <Button
+                <MButton
                   variant="ghost"
                   size="sm"
-                  className="h-6 px-2 text-xs"
+                  className="rounded-full !px-2 !text-xs"
                   onClick={clearFilters}
                 >
                   <X className="h-3.5 w-3.5" />
                   {t.dashboard.search.clear}
-                </Button>
+                </MButton>
               )}
             </div>
           )}
@@ -595,10 +595,10 @@ export default function Home() {
           title={t.dashboard.search.noMatchTitle}
           description={t.dashboard.search.noMatchBody}
         >
-          <Button variant="outline" onClick={clearFilters}>
-            <X />
+          <MButton variant="outline" size="sm" onClick={clearFilters} className="rounded-md">
+            <X className="h-3.5 w-3.5" />
             {t.dashboard.search.clear}
-          </Button>
+          </MButton>
         </EmptyState>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -1,13 +1,15 @@
 "use client";
 
 import { Columns2 } from "lucide-react";
+import { StatusBar, type StatusBarDatum } from "@/components/charts/status-bar";
+import { STATUS_COLOR } from "@/components/status";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
+import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { StatusBadge } from "@/components/status-badge";
 import { absoluteTime, logMessage, relativeTime } from "@/components/status";
 import { useDict } from "@/components/locale-provider";
@@ -135,9 +137,9 @@ function metricsOf(log: CheckLog, backend: string | null, m: Metrics): Metric[] 
       key: "errorKind",
       label: m.errorKind,
       value: (
-        <Badge variant="destructive" className="font-mono text-[11px]">
+        <AnimatedBadge status="danger" size="sm">
           {log.errorKind}
-        </Badge>
+        </AnimatedBadge>
       ),
     });
   }
@@ -165,8 +167,28 @@ export function CheckHistory({
     );
   }
 
+  // Newest-first logs → oldest-first bars, mapped onto the check statuses.
+  const ordered = [...logs].reverse();
+  const barData: StatusBarDatum[] = ordered.map((log) => ({
+    id: log.id,
+    label: absoluteTime(log.createdAt),
+    status: log.status === "OK" || log.status === "CHANGED" || log.status === "ERROR" ? log.status : "SKIPPED",
+    description: logMessage(log.message),
+  }));
+
   return (
-    // Several rows stay open at once: comparing a 403 with a change is the job.
+    <div className="space-y-4">
+      <StatusBar
+        data={barData}
+        label={t.detail.checks.title}
+        statuses={[
+          { id: "OK", label: "OK", color: "var(--success)" },
+          { id: "CHANGED", label: "CHANGED", color: "var(--warning)" },
+          { id: "ERROR", label: "ERROR", color: "var(--destructive)" },
+          { id: "SKIPPED", label: "SKIPPED", color: STATUS_COLOR.SKIPPED },
+        ]}
+      />
+    {/* Several rows stay open at once: comparing a 403 with a change is the job. */}
     <Accordion type="multiple" className="w-full">
       {logs.map((log) => {
         const backend = log.backend ?? readBackend(log.message);
@@ -259,5 +281,6 @@ export function CheckHistory({
         );
       })}
     </Accordion>
+    </div>
   );
 }

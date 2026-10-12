@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldAlert } from "lucide-react";
+import { LayoutDashboard, Settings2, ShieldAlert, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/motion/tabs";
 import { useDict } from "@/components/locale-provider";
 import { isAdminSession, useSession } from "@/lib/auth-client";
 import { AdminOverview } from "@/components/admin-overview";
@@ -60,11 +60,20 @@ export function AdminConsole() {
         </p>
       </section>
 
-      <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+      <Tabs value={tab} onValueChange={setTab} variant="pill" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">{t.admin.tabs.overview}</TabsTrigger>
-          <TabsTrigger value="users">{t.admin.tabs.users}</TabsTrigger>
-          <TabsTrigger value="settings">{t.admin.tabs.settings}</TabsTrigger>
+          <TabsTrigger value="overview">
+            <LayoutDashboard className="h-3.5 w-3.5" />
+            {t.admin.tabs.overview}
+          </TabsTrigger>
+          <TabsTrigger value="users">
+            <Users className="h-3.5 w-3.5" />
+            {t.admin.tabs.users}
+          </TabsTrigger>
+          <TabsTrigger value="settings">
+            <Settings2 className="h-3.5 w-3.5" />
+            {t.admin.tabs.settings}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
           <AdminOverview />

@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Pause, Play, RefreshCw, Settings2, Trash2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { TiltCard } from "@/components/motion/tilt-card";
+import { Magnetic } from "@/components/motion/magnetic";
+import { Button as MButton } from "@/components/motion/button/base";
+import { StatefulButton } from "@/components/motion/button/stateful";
+import { Tooltip } from "@/components/motion/tooltip";
 import { SiteFavicon } from "@/components/site-favicon";
 import { StatusBadge } from "@/components/status-badge";
 import { relativeTime, untilTime } from "@/components/status";
@@ -38,11 +41,11 @@ export function WatchCard({
   const isActive = watch.active;
 
   return (
-    <Card
-      className="animate-rise group overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-muted-foreground/30 hover:shadow-[var(--shadow-card-hover)]"
-      style={{ animationDelay: `${Math.min(index, 10) * 55}ms` }}
-    >
-      <CardContent className="p-0">
+    <div className="animate-rise" style={{ animationDelay: `${Math.min(index, 10) * 55}ms` }}>
+      <TiltCard
+        max={6}
+        className="border border-border bg-card shadow-[var(--shadow-card)] transition-[box-shadow,border-color] duration-300 hover:border-muted-foreground/30 hover:shadow-[var(--shadow-card-hover)]"
+      >
         <div className="flex items-start gap-3 p-4 pb-3 sm:p-5 sm:pb-3">
           <SiteFavicon url={watch.url} />
           <div className="min-w-0 flex-1">
@@ -84,51 +87,65 @@ export function WatchCard({
         </div>
 
         <div className="flex items-center gap-2 border-t border-border bg-card-highlight px-3 py-2.5 sm:px-4">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onCheck(watch)}
-            disabled={checking || !isActive}
-            title={isActive ? t.card.checkNowTitle : t.card.pausedTitle}
-          >
-            {checking ? <span className="btn-spinner" aria-hidden="true" /> : <RefreshCw />}
-            {t.card.checkNow}
-          </Button>
+          <Magnetic strength={0.25}>
+            <StatefulButton
+              size="sm"
+              variant="outline"
+              state={checking ? "loading" : "idle"}
+              loadingText={t.card.checkNow}
+              icon={<RefreshCw className="h-3.5 w-3.5" />}
+              onClick={() => onCheck(watch)}
+              disabled={!isActive}
+              title={isActive ? t.card.checkNowTitle : t.card.pausedTitle}
+              className="rounded-md"
+            >
+              {t.card.checkNow}
+            </StatefulButton>
+          </Magnetic>
 
-          <Button
+          <MButton
             size="sm"
             variant="ghost"
             onClick={() => onToggle(watch)}
             title={isActive ? t.card.pauseTitle : t.card.resumeTitle}
+            className="rounded-md"
           >
-            {isActive ? <Pause /> : <Play />}
+            {isActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
             {isActive ? t.card.pause : t.card.resume}
-          </Button>
+          </MButton>
 
           <div className="ml-auto flex items-center gap-1">
-            <Link
-              href={`/watches/${watch.id}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-              aria-label={t.card.openSettings}
-              title={t.card.openSettings}
-            >
-              <Settings2 className="h-4 w-4" />
-            </Link>
+            <Tooltip content={t.card.openSettings} side="top">
+              <Link
+                href={`/watches/${watch.id}`}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                aria-label={t.card.openSettings}
+                title={t.card.openSettings}
+              >
+                <Settings2 className="h-4 w-4" />
+              </Link>
+            </Tooltip>
 
-            <Button
-              size="sm"
-              variant={confirming ? "destructive" : "ghost"}
-              onClick={() => (confirming ? onDelete(watch) : setConfirming(true))}
-              title={confirming ? t.card.deleteConfirmTitle : t.card.deleteTitle}
-              aria-label={t.card.deleteLabel}
-              className="text-destructive hover:bg-destructive-soft hover:text-destructive"
-            >
-              <Trash2 />
-              <span className={confirming ? "" : "hidden"}>{t.card.confirm}</span>
-            </Button>
+            <Tooltip content={confirming ? t.card.deleteConfirmTitle : t.card.deleteTitle} side="top">
+              <MButton
+                size="sm"
+                variant="ghost"
+                onClick={() => (confirming ? onDelete(watch) : setConfirming(true))}
+                title={confirming ? t.card.deleteConfirmTitle : t.card.deleteTitle}
+                aria-label={t.card.deleteLabel}
+                className={
+                  confirming
+                    ? "rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:text-destructive-foreground"
+                    : "rounded-md text-destructive hover:bg-destructive-soft hover:text-destructive"
+                }
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                {confirming ? t.card.confirm : null}
+              </MButton>
+            </Tooltip>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </TiltCard>
+    </div>
   );
 }
