@@ -1,9 +1,26 @@
-import { Badge } from "@/components/ui/badge";
-import { STATUS_COLOR, statusLabel, statusTone } from "@/components/status";
+"use client";
+
+import { AnimatedBadge, type AnimatedBadgeStatus } from "@/components/motion/animated-badge";
+import { statusLabel } from "@/components/status";
+
+function toAnimatedStatus(status?: string | null, active = true): AnimatedBadgeStatus {
+  if (!active || !status) return "neutral";
+  switch (status) {
+    case "OK":
+      return "success";
+    case "CHANGED":
+      return "warning";
+    case "ERROR":
+      return "danger";
+    default:
+      return "neutral";
+  }
+}
 
 /**
- * Status pill built on the registry badge: official shape, theme tone,
- * pulsing dot. Everything user-facing comes from the `messages/` dictionaries.
+ * Status pill built on the beui animated badge: the icon and label roll
+ * over with a blur when the status changes. Everything user-facing still
+ * comes from the `messages/` dictionaries.
  */
 export function StatusBadge({
   status,
@@ -16,17 +33,9 @@ export function StatusBadge({
   title?: string;
   label?: string;
 }) {
-  const color =
-    active && status ? (STATUS_COLOR[status] ?? "var(--muted-foreground)") : "var(--muted-foreground)";
-
   return (
-    <Badge variant="outline" className={statusTone(status, active)} title={title}>
-      <span
-        className="status-dot"
-        style={{ backgroundColor: color, color }}
-        aria-hidden="true"
-      />
+    <AnimatedBadge status={toAnimatedStatus(status, active)} size="sm" title={title}>
       {label ?? statusLabel(status, active)}
-    </Badge>
+    </AnimatedBadge>
   );
 }

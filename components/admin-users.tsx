@@ -3,9 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   Ban,
-  CircleCheck,
-  CircleX,
-  Loader2,
   Plus,
   RefreshCw,
   ShieldCheck,
@@ -14,6 +11,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Magnetic } from "@/components/motion/magnetic";
+import { StatefulButton } from "@/components/motion/button/stateful";
+import { AnimatedBadge } from "@/components/motion/animated-badge";
+import { Tooltip } from "@/components/motion/tooltip";
 import {
   Card,
   CardContent,
@@ -21,16 +22,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/motion/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+} from "@/components/motion/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -207,43 +206,40 @@ export function AdminUsers() {
             onSubmit={(e) => void create(e)}
             className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto]"
           >
+            <Input
+              id="admin-new-name"
+              label={t.admin.users.nameField}
+              required
+              value={name}
+              onChange={setName}
+              placeholder={t.admin.users.namePlaceholder}
+              classNames={{ field: "!rounded-lg", input: "text-sm" }}
+            />
+            <Input
+              id="admin-new-email"
+              label={t.admin.users.emailField}
+              type="email"
+              required
+              value={email}
+              onChange={setEmail}
+              placeholder={t.admin.users.emailPlaceholder}
+              classNames={{ field: "!rounded-lg", input: "text-sm" }}
+            />
+            <Input
+              id="admin-new-password"
+              label={t.admin.users.passwordField}
+              type="password"
+              autoComplete="new-password"
+              required
+              value={password}
+              onChange={setPassword}
+              placeholder={t.admin.users.passwordPlaceholder}
+              classNames={{ field: "!rounded-lg", input: "text-sm" }}
+            />
             <div className="space-y-2">
-              <Label htmlFor="admin-new-name">{t.admin.users.nameField}</Label>
-              <Input
-                id="admin-new-name"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t.admin.users.namePlaceholder}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="admin-new-email">{t.admin.users.emailField}</Label>
-              <Input
-                id="admin-new-email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.admin.users.emailPlaceholder}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="admin-new-password">{t.admin.users.passwordField}</Label>
-              <Input
-                id="admin-new-password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t.admin.users.passwordPlaceholder}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="admin-new-role">{t.admin.users.roleField}</Label>
+              <span className="px-1 text-sm font-medium text-foreground">{t.admin.users.roleField}</span>
               <Select value={role} onValueChange={(v) => setRole(v as AdminRole)}>
-                <SelectTrigger id="admin-new-role" className="w-full sm:w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -253,10 +249,17 @@ export function AdminUsers() {
               </Select>
             </div>
             <div className="flex items-end sm:col-span-2 lg:col-span-1">
-              <Button type="submit" disabled={creating} className="w-full lg:w-auto">
-                {creating ? <Loader2 className="animate-spin" /> : <Plus />}
-                {t.admin.users.create}
-              </Button>
+              <Magnetic strength={0.2} className="w-full lg:w-auto">
+                <StatefulButton
+                  type="submit"
+                  state={creating ? "loading" : "idle"}
+                  loadingText={t.admin.users.create}
+                  icon={<Plus className="h-4 w-4" />}
+                  className="w-full rounded-md lg:w-auto"
+                >
+                  {t.admin.users.create}
+                </StatefulButton>
+              </Magnetic>
             </div>
           </form>
         </CardContent>
@@ -302,17 +305,15 @@ export function AdminUsers() {
                         <p className="font-medium">{u.name || u.email}</p>
                         <p className="text-xs text-muted-foreground">{u.email}</p>
                         {u.banned ? (
-                          <Badge variant="destructive" className="mt-1">
-                            <CircleX />
+                          <AnimatedBadge status="danger" size="sm" className="mt-1">
                             {t.admin.users.banned}
-                          </Badge>
+                          </AnimatedBadge>
                         ) : (
-                          <Badge variant="outline" className="mt-1">
-                            <CircleCheck />
+                          <AnimatedBadge status="neutral" size="sm" className="mt-1">
                             {u.role === "admin"
                               ? t.admin.users.roleAdmin
                               : t.admin.users.roleUser}
-                          </Badge>
+                          </AnimatedBadge>
                         )}
                       </TableCell>
                       <TableCell>
@@ -332,29 +333,43 @@ export function AdminUsers() {
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1.5">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={busy}
-                            onClick={() => void toggleBan(u)}
+                          <Tooltip
+                            content={u.banned ? t.admin.users.unban : t.admin.users.ban}
+                            side="top"
                           >
-                            <Ban />
-                            {u.banned ? t.admin.users.unban : t.admin.users.ban}
-                          </Button>
-                          <Button
-                            variant={confirmDelete === u.id ? "destructive" : "ghost"}
-                            size="sm"
-                            disabled={busy}
-                            onClick={() => void remove(u)}
-                            title={
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={busy}
+                              onClick={() => void toggleBan(u)}
+                            >
+                              <Ban />
+                              {u.banned ? t.admin.users.unban : t.admin.users.ban}
+                            </Button>
+                          </Tooltip>
+                          <Tooltip
+                            content={
                               confirmDelete === u.id
                                 ? t.admin.users.deleteConfirmTitle
                                 : t.admin.users.delete
                             }
+                            side="top"
                           >
-                            <Trash2 />
-                            {confirmDelete === u.id ? t.admin.users.deleteConfirmTitle : ""}
-                          </Button>
+                            <Button
+                              variant={confirmDelete === u.id ? "destructive" : "ghost"}
+                              size="sm"
+                              disabled={busy}
+                              onClick={() => void remove(u)}
+                              title={
+                                confirmDelete === u.id
+                                  ? t.admin.users.deleteConfirmTitle
+                                  : t.admin.users.delete
+                              }
+                            >
+                              <Trash2 />
+                              {confirmDelete === u.id ? t.admin.users.deleteConfirmTitle : ""}
+                            </Button>
+                          </Tooltip>
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,49 +1,42 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { ActionSwapIcon } from "@/components/motion/action-swap";
+import { useThemeToggle } from "@/components/motion/theme-toggle";
+import { Tooltip } from "@/components/motion/tooltip";
 import { useDict } from "@/components/locale-provider";
 
-const emptySubscribe = () => () => {};
-
-/** True in the browser, false on the server (avoids the hydration mismatch). */
-function useMounted() {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false
-  );
-}
-
+/**
+ * Theme switch built on the beui theme toggle: the whole page repaints
+ * through the View Transition API (circle reveal), the icon blur-swaps.
+ * Labels stay localized — the registry toggle ships English-only copy.
+ */
 export function ThemeToggle() {
   const t = useDict();
-  const { resolvedTheme, setTheme } = useTheme();
-  const mounted = useMounted();
-  const isDark = mounted && resolvedTheme === "dark";
+  const { isDark, mounted, toggle } = useThemeToggle({ variant: "circle", start: "bottom-up" });
+  const label = isDark ? t.header.switchToLight : t.header.switchToDark;
 
   return (
-    <Button
-      variant="ghost"
-      size="icon-sm"
-      aria-label={isDark ? t.header.switchToLight : t.header.switchToDark}
-      title={isDark ? t.header.themeLight : t.header.themeDark}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      className="relative overflow-hidden"
-    >
-      <span className={isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}>
-        <Sun className="transition-all duration-300" />
-      </span>
-      <span
-        className={
-          isDark
-            ? "absolute rotate-0 scale-100 opacity-100"
-            : "absolute -rotate-90 scale-0 opacity-0"
-        }
+    <Tooltip content={mounted ? label : undefined} side="bottom">
+      <button
+        type="button"
+        aria-label={label}
+        title={isDark ? t.header.themeLight : t.header.themeDark}
+        onClick={toggle}
+        className="relative inline-flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
       >
-        <Moon className="transition-all duration-300" />
-      </span>
-    </Button>
+        {mounted ? (
+          <ActionSwapIcon
+            value={isDark ? "dark" : "light"}
+            animation="blur"
+            className="inline-flex"
+          >
+            {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </ActionSwapIcon>
+        ) : (
+          <span className="inline-flex h-4 w-4" aria-hidden="true" />
+        )}
+      </button>
+    </Tooltip>
   );
 }

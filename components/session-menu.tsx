@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { LogOut, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Button as MButton } from "@/components/motion/button/base";
+import { Tooltip } from "@/components/motion/tooltip";
 import { useDict } from "@/components/locale-provider";
 import { isAdminSession, signOut, useSession } from "@/lib/auth-client";
 
@@ -59,15 +61,17 @@ export function SessionMenu() {
       >
         {label}
       </span>
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={() => void handleSignOut()}
-        aria-label={t.header.signOutLabel}
-        title={t.header.signOut}
-      >
-        <LogOut />
-      </Button>
+      <Tooltip content={t.header.signOut} side="bottom">
+        <MButton
+          size="icon"
+          variant="ghost"
+          onClick={() => void handleSignOut()}
+          aria-label={t.header.signOutLabel}
+          title={t.header.signOut}
+        >
+          <LogOut className="h-4 w-4" />
+        </MButton>
+      </Tooltip>
     </span>
   );
 }

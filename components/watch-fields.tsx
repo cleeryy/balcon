@@ -1,14 +1,13 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/motion/input";
 import {
   Collapsible,
   CollapsibleContent,
+  CollapsibleIndicator,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@/components/motion/collapsible";
+import { Button } from "@/components/ui/button";
 import { useDict } from "@/components/locale-provider";
 import { cn } from "@/lib/utils";
 
@@ -25,17 +24,18 @@ export function TagsField({
 }) {
   const t = useDict();
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{t.form.tagsField}</Label>
+    <div className="space-y-1">
       <Input
         id={id}
+        label={t.form.tagsField}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
         placeholder={t.form.tagsPlaceholder}
         autoComplete="off"
         spellCheck={false}
+        classNames={{ field: "!rounded-lg", input: "text-sm" }}
       />
-      <p className="text-xs text-muted-foreground">{t.form.tagsHint}</p>
+      <p className="px-1 text-xs text-muted-foreground">{t.form.tagsHint}</p>
     </div>
   );
 }
@@ -53,18 +53,18 @@ export function ValueRegexField({
 }) {
   const t = useDict();
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{t.form.valueRegexField}</Label>
+    <div className="space-y-1">
       <Input
         id={id}
+        label={t.form.valueRegexField}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={onChange}
         placeholder={t.form.valueRegexPlaceholder}
-        className="font-mono text-sm"
         autoComplete="off"
         spellCheck={false}
+        classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
       />
-      <p className="text-xs text-muted-foreground">{t.form.valueRegexHint}</p>
+      <p className="px-1 text-xs text-muted-foreground">{t.form.valueRegexHint}</p>
     </div>
   );
 }
@@ -90,38 +90,31 @@ export function NotificationsFields({
   const t = useDict();
   return (
     <Collapsible defaultOpen={defaultOpen ?? Boolean(discord || slack)} className="space-y-2">
-      <CollapsibleTrigger className="group inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">
-        <ChevronDown
-          className="h-4 w-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
-          aria-hidden="true"
-        />
+      <CollapsibleTrigger className="inline-flex items-center gap-2 rounded-md text-sm font-semibold text-foreground transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">
+        <CollapsibleIndicator className="ml-0 [&_svg]:h-4 [&_svg]:w-4" />
         {t.form.notifications}
       </CollapsibleTrigger>
       <p className="text-xs text-muted-foreground">{t.form.notificationsHint}</p>
 
-      <CollapsibleContent className="grid gap-4 pt-1 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor={`${idPrefix}-discord`}>{t.form.discordField}</Label>
-          <Input
-            id={`${idPrefix}-discord`}
-            value={discord}
-            onChange={(e) => onDiscord(e.target.value)}
-            placeholder={t.form.discordPlaceholder}
-            className="font-mono text-sm"
-            spellCheck={false}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor={`${idPrefix}-slack`}>{t.form.slackField}</Label>
-          <Input
-            id={`${idPrefix}-slack`}
-            value={slack}
-            onChange={(e) => onSlack(e.target.value)}
-            placeholder={t.form.slackPlaceholder}
-            className="font-mono text-sm"
-            spellCheck={false}
-          />
-        </div>
+      <CollapsibleContent className="grid gap-4 pt-1 sm:grid-cols-2" contentClassName="!overflow-visible">
+        <Input
+          id={`${idPrefix}-discord`}
+          label={t.form.discordField}
+          value={discord}
+          onChange={onDiscord}
+          placeholder={t.form.discordPlaceholder}
+          spellCheck={false}
+          classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
+        />
+        <Input
+          id={`${idPrefix}-slack`}
+          label={t.form.slackField}
+          value={slack}
+          onChange={onSlack}
+          placeholder={t.form.slackPlaceholder}
+          spellCheck={false}
+          classNames={{ field: "!rounded-lg", input: "font-mono text-sm" }}
+        />
       </CollapsibleContent>
     </Collapsible>
   );
@@ -239,30 +232,32 @@ export function CheckWindowEditor({
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <Label htmlFor={`${idPrefix}-start`} className="text-xs text-muted-foreground">
-              {t.form.from}
-            </Label>
-            <Input
-              id={`${idPrefix}-start`}
-              type="time"
-              value={state.start}
-              onChange={(e) => update({ start: e.target.value })}
-              className="h-9 font-mono text-sm"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor={`${idPrefix}-end`} className="text-xs text-muted-foreground">
-              {t.form.to}
-            </Label>
-            <Input
-              id={`${idPrefix}-end`}
-              type="time"
-              value={state.end}
-              onChange={(e) => update({ end: e.target.value })}
-              className="h-9 font-mono text-sm"
-            />
-          </div>
+          <Input
+            id={`${idPrefix}-start`}
+            label={t.form.from}
+            type="time"
+            value={state.start}
+            onChange={(next) => update({ start: next })}
+            classNames={{
+              root: "gap-1",
+              label: "!px-0 text-xs !text-muted-foreground",
+              field: "!h-9 !rounded-lg",
+              input: "font-mono text-sm",
+            }}
+          />
+          <Input
+            id={`${idPrefix}-end`}
+            label={t.form.to}
+            type="time"
+            value={state.end}
+            onChange={(next) => update({ end: next })}
+            classNames={{
+              root: "gap-1",
+              label: "!px-0 text-xs !text-muted-foreground",
+              field: "!h-9 !rounded-lg",
+              input: "font-mono text-sm",
+            }}
+          />
         </div>
 
         <p className="text-xs text-muted-foreground">
