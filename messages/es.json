@@ -13,7 +13,11 @@
     "switchToLight": "Cambiar a tema claro",
     "switchToDark": "Cambiar a tema oscuro",
     "themeLight": "Tema claro",
-    "themeDark": "Tema oscuro"
+    "themeDark": "Tema oscuro",
+    "admin": "Admin",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "signOutLabel": "Cerrar esta sesión"
   },
 
   "common": {
@@ -269,6 +273,98 @@
     "hiddenLines": {
       "one": "{0} línea más oculta para mantener la fluidez.",
       "other": "{0} líneas más ocultas para mantener la fluidez."
+    }
+  },
+
+  "auth": {
+    "eyebrow": "Iniciar sesión",
+    "heading": "Qué bueno verte",
+    "intro": "Inicia sesión con tu cuenta para llegar al panel. Las cuentas nuevas las crea una persona administradora.",
+    "emailField": "Correo",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "passwordField": "Contraseña",
+    "passwordPlaceholder": "Tu contraseña",
+    "submit": "Iniciar sesión",
+    "sso": "Continuar con SSO",
+    "ssoHint": "Tu organización te identifica a través de su proveedor de identidad.",
+    "signedIn": "Sesión iniciada",
+    "signedInDesc": "Qué bueno verte.",
+    "failed": "No se pudo iniciar sesión",
+    "failedDesc": "Revisa tu correo y tu contraseña e inténtalo de nuevo."
+  },
+
+  "admin": {
+    "eyebrow": "Administración",
+    "heading": "Consola",
+    "intro": "Personas, ajustes de la instancia y una vista general de esta instancia de balcon.",
+    "tabs": {
+      "overview": "Resumen",
+      "users": "Usuarios",
+      "settings": "Ajustes"
+    },
+    "deniedTitle": "Página no encontrada",
+    "deniedBody": "Esta página no existe o no tienes acceso a ella.",
+    "goBack": "Volver al panel",
+    "overview": {
+      "users": "Usuarios",
+      "usersHint": "cuentas registradas",
+      "watches": "Vigilancias",
+      "watchesHint": "páginas seguidas",
+      "checks": "Revisiones",
+      "checksHint": "ejecuciones registradas",
+      "loadFailed": "No se pudo cargar el resumen"
+    },
+    "users": {
+      "title": "Usuarios",
+      "description": "Todas las personas que pueden iniciar sesión. Los roles se aplican en el próximo inicio.",
+      "createTitle": "Crear un usuario",
+      "nameField": "Nombre",
+      "namePlaceholder": "Ada Lovelace",
+      "emailField": "Correo",
+      "emailPlaceholder": "ada@ejemplo.com",
+      "passwordField": "Contraseña",
+      "passwordPlaceholder": "Una contraseña segura",
+      "roleField": "Rol",
+      "roleAdmin": "Admin",
+      "roleUser": "Usuario",
+      "create": "Crear usuario",
+      "banned": "Bloqueado",
+      "sessions": "Sesiones",
+      "ban": "Bloquear",
+      "unban": "Desbloquear",
+      "delete": "Eliminar",
+      "deleteConfirmTitle": "Pulsa de nuevo para eliminar",
+      "makeAdmin": "Hacer admin",
+      "makeUser": "Hacer usuario",
+      "empty": "Aún no hay usuarios.",
+      "created": "Usuario creado",
+      "createFailed": "No se pudo crear el usuario",
+      "roleUpdated": "Rol actualizado",
+      "roleFailed": "No se pudo cambiar el rol",
+      "bannedToast": "Usuario bloqueado",
+      "unbannedToast": "Usuario desbloqueado",
+      "banFailed": "No se pudo cambiar el bloqueo",
+      "deleted": "Usuario eliminado",
+      "deleteFailed": "No se pudo eliminar el usuario",
+      "loadFailed": "No se pudieron cargar los usuarios"
+    },
+    "settings": {
+      "title": "Ajustes de la instancia",
+      "description": "El nombre mostrado en la interfaz y el intervalo de revisión por defecto de las nuevas vigilancias.",
+      "siteNameField": "Nombre del sitio",
+      "siteNamePlaceholder": "balcon",
+      "intervalField": "Intervalo por defecto (minutos)",
+      "intervalHint": "1 minuto como mínimo.",
+      "save": "Guardar",
+      "saved": "Ajustes guardados",
+      "saveFailed": "No se pudieron guardar los ajustes",
+      "loadFailed": "No se pudieron cargar los ajustes",
+      "oidcTitle": "Inicio de sesión único (OIDC)",
+      "oidcConfigured": "Configurado",
+      "oidcNotConfigured": "Sin configurar",
+      "oidcIssuer": "Emisor",
+      "oidcCallback": "URL de retorno",
+      "oidcHint": "Solo lectura — las credenciales viven en el entorno del servidor, nunca aquí."
     }
   },
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import { Logo } from "@/components/logo";
+import { SessionMenu } from "@/components/session-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { useDict } from "@/components/locale-provider";
@@ -57,6 +58,7 @@ export function SiteHeader() {
           </a>
           <LocaleSwitcher />
           <ThemeToggle />
+          <SessionMenu />
         </nav>
       </div>
     </header>
